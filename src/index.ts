@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import { connectDatabase } from './config/database';
 import { corsOptions } from './middleware/cors';
 import { errorHandler } from './middleware/errorHandler';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './docs/swagger';
+import routes from './routes';
 
 // Load environment variables
 dotenv.config();
@@ -11,25 +14,12 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middlewares
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Health check route
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// API routes
-import routes from './routes';
-app.use('/api', routes);
-
-// Error handling middleware (should be last)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/', routes);
 app.use(errorHandler);
 
 // Start server
