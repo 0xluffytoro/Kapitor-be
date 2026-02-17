@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { BusinessUser } from '../models/BusinessUser.model';
 import { sendSuccess } from '../utils/response';
-import { DynamicEvmWalletClient } from '@dynamic-labs-wallet/node-evm';
-import { ThresholdSignatureScheme } from '@dynamic-labs-wallet/node';
+// import { DynamicEvmWalletClient } from '@dynamic-labs-wallet/node-evm';
+// import { ThresholdSignatureScheme } from '@dynamic-labs-wallet/node';
 
 /**
  * Create business user account
@@ -23,18 +23,18 @@ export async function createBusinessUser(
       ownerShipPercentage,
     } = req.body;
 
-    const client = new DynamicEvmWalletClient({
-      environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
-      enableMPCAccelerator: false,
-    });
+    // const client = new DynamicEvmWalletClient({
+    //   environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
+    //   enableMPCAccelerator: false,
+    // });
 
-    const evmWallet = await (
-      client as DynamicEvmWalletClient
-    ).createWalletAccount({
-      thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
-      password: process.env.WALLET_PASSWORD,
-      backUpToClientShareService: false,
-    });
+    // const evmWallet = await (
+    //   client as DynamicEvmWalletClient
+    // ).createWalletAccount({
+    //   thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
+    //   password: process.env.WALLET_PASSWORD,
+    //   backUpToClientShareService: false,
+    // });
 
     const businessUser = await BusinessUser.create({
       businessName,
@@ -43,7 +43,7 @@ export async function createBusinessUser(
       dateOfIncorporation,
       ownerName,
       ownerShipPercentage,
-      walletAddress: evmWallet.accountAddress,
+      // walletAddress: evmWallet.accountAddress,
     });
 
     sendSuccess(
@@ -56,7 +56,7 @@ export async function createBusinessUser(
         dateOfIncorporation: businessUser.dateOfIncorporation,
         ownerName: businessUser.ownerName,
         ownerShipPercentage: businessUser.ownerShipPercentage,
-        walletAddress: evmWallet.accountAddress,
+        // walletAddress: evmWallet.accountAddress,
       },
       201
     );
