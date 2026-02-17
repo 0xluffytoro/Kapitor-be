@@ -80,12 +80,14 @@ const options: swaggerJsdoc.Options = {
       { name: 'Health', description: 'Health check endpoints' },
       { name: 'OTP', description: 'OTP verification endpoints' },
       { name: 'User', description: 'User profile endpoints' },
+      { name: 'KYC', description: 'KYC submission endpoints' },
     ],
   },
   apis: [
     path.join(__dirname, `../routes/index${path.extname(__filename)}`),
     path.join(__dirname, `../routes/otp.routes${path.extname(__filename)}`),
     path.join(__dirname, `../routes/user.routes${path.extname(__filename)}`),
+    path.join(__dirname, `../routes/kyc.routes${path.extname(__filename)}`),
   ],
 };
 
