@@ -29,7 +29,7 @@ export async function submitKyc(
       documents,
     });
 
-    sendSuccess(res, { message: 'KYC completed successfully' }, 200);
+    sendSuccess(res, { message: 'KYC under process' }, 200);
   } catch (error) {
     next(error);
   }
