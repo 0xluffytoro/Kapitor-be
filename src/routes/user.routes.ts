@@ -1,7 +1,56 @@
 import { Router } from 'express';
-import { getDetails } from '../controllers/user.controller';
+import { createUser, getDetails } from '../controllers/user.controller';
 
 const router = Router();
+
+/**
+ * @openapi
+ * /user:
+ *   post:
+ *     summary: Create user profile
+ *     description: Creates a user profile linked to the authenticated phone number
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               dob:
+ *                 type: string
+ *               nationality:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *               zipCode:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ *       404:
+ *         description: Phone number not found
+ *       409:
+ *         description: User already exists
+ */
+router.post('/', createUser);
 
 /**
  * @openapi

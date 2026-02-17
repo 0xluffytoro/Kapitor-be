@@ -20,6 +20,8 @@
     "pnpm": ">=10.0.0"
   },
   "dependencies": {
+    "@dynamic-labs-wallet/node": "^0.0.268",
+    "@dynamic-labs-wallet/node-evm": "^0.0.268",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
