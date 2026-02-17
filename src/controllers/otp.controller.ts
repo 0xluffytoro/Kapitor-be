@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import twilio from 'twilio';
 import jwt from 'jsonwebtoken';
 import { Otp } from '../models/Otp.model';
-import { User } from '../models/User.model';
+import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { sendSuccess, sendError } from '../utils/response';
 
 const OTP_EXPIRATION_SECONDS = 300; // 5 minutes
@@ -143,20 +143,18 @@ export async function verifyOTP(
     // Format phone number to E.164 format for consistency
     const formattedPhone = toE164(phoneNumber);
 
-    // Check if user exists with this phone number
-    let user = await User.findOne({ phoneNumber: formattedPhone });
-    let uid: string;
+    // Save phone number only and use PhoneNumbers _id as uid
+    let phoneRecord = await PhoneNumbers.findOne({
+      phoneNumber: formattedPhone,
+    });
 
-    if (!user) {
-      // Create user in MongoDB
-      user = await User.create({
+    if (!phoneRecord) {
+      phoneRecord = await PhoneNumbers.create({
         phoneNumber: formattedPhone,
-        role: 'user',
       });
-      uid = user._id.toString();
-    } else {
-      uid = user._id.toString();
     }
+
+    const uid = phoneRecord._id.toString();
 
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET;
@@ -165,7 +163,9 @@ export async function verifyOTP(
       return;
     }
 
-    const token = jwt.sign({ uid }, jwtSecret, { expiresIn: '24h' });
+    const token = jwt.sign({ uid, mobileNumber: formattedPhone }, jwtSecret, {
+      expiresIn: '24h',
+    });
     sendSuccess(res, { token }, 200);
   } catch (error) {
     next(error);

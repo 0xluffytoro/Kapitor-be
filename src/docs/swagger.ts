@@ -81,6 +81,7 @@ const options: swaggerJsdoc.Options = {
       { name: 'OTP', description: 'OTP verification endpoints' },
       { name: 'User', description: 'User profile endpoints' },
       { name: 'KYC', description: 'KYC submission endpoints' },
+      { name: 'BusinessUser', description: 'Business user endpoints' },
     ],
   },
   apis: [
@@ -88,6 +89,10 @@ const options: swaggerJsdoc.Options = {
     path.join(__dirname, `../routes/otp.routes${path.extname(__filename)}`),
     path.join(__dirname, `../routes/user.routes${path.extname(__filename)}`),
     path.join(__dirname, `../routes/kyc.routes${path.extname(__filename)}`),
+    path.join(
+      __dirname,
+      `../routes/business-user.routes${path.extname(__filename)}`
+    ),
   ],
 };
 
