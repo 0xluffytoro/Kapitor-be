@@ -4,8 +4,6 @@ import { sendSuccess, sendError } from '../utils/response';
 import { AuthRequest } from '../middleware/auth';
 import mongoose from 'mongoose';
 import { PhoneNumbers } from '../models/PhoneNumbers.model';
-// import { DynamicEvmWalletClient } from '@dynamic-labs-wallet/node-evm';
-// import { ThresholdSignatureScheme } from '@dynamic-labs-wallet/node';
 
 /**
  * Get authenticated user's details
@@ -93,18 +91,21 @@ export async function createUser(
       return;
     }
 
-    // const client = new DynamicEvmWalletClient({
-    //   environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
-    //   enableMPCAccelerator: false,
-    // });
+    const { DynamicEvmWalletClient } =
+      await import('@dynamic-labs-wallet/node-evm');
+    const client = new DynamicEvmWalletClient({
+      environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
+      enableMPCAccelerator: false,
+    });
 
-    // const evmWallet = await (
-    //   client as DynamicEvmWalletClient
-    // ).createWalletAccount({
-    //   thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
-    //   password: process.env.WALLET_PASSWORD,
-    //   backUpToClientShareService: false,
-    // });
+    const { ThresholdSignatureScheme } =
+      await import('@dynamic-labs-wallet/node');
+
+    const evmWallet = await client.createWalletAccount({
+      thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
+      password: process.env.WALLET_PASSWORD,
+      backUpToClientShareService: false,
+    });
 
     const user = await User.create({
       _id: uid,
@@ -117,7 +118,7 @@ export async function createUser(
       state,
       zipCode,
       country,
-      // walletAddress: evmWallet.accountAddress,
+      walletAddress: evmWallet.accountAddress,
       role: 'user',
     });
 
@@ -136,7 +137,7 @@ export async function createUser(
         state: user.state,
         zipCode: user.zipCode,
         country: user.country,
-        // walletAddress: user.walletAddress,
+        walletAddress: user.walletAddress,
         role: user.role,
       },
       201
