@@ -17,10 +17,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(express.static(path.join(process.cwd(), 'src')));
 app.use(express.static(path.join(__dirname)));
 
-app.get('/', (_, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'index.html'));
+app.get('*', (_, res) => {
+  res.sendFile(path.join(process.cwd(), 'src', 'index.html'));
 });
 
 app.use('/', routes);
