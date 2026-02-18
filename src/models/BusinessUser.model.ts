@@ -23,6 +23,7 @@ const businessUserSchema = new Schema<IBusinessUser>(
     companyRegistration: {
       type: String,
       required: true,
+      index: true,
     },
     dateOfIncorporation: {
       type: String,
@@ -46,8 +47,6 @@ const businessUserSchema = new Schema<IBusinessUser>(
     versionKey: false,
   }
 );
-
-businessUserSchema.index({ companyRegistration: 1 });
 
 export const BusinessUser = model<IBusinessUser>(
   'BusinessUser',

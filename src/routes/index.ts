@@ -3,6 +3,7 @@ import otpRoutes from './otp.routes';
 import userRoutes from './user.routes';
 import kycRoutes from './kyc.routes';
 import businessUserRoutes from './business-user.routes';
+import paymentRoutes from './payment.routes';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -45,5 +46,6 @@ router.use('/otp', otpRoutes);
 router.use('/user', authenticate, userRoutes);
 router.use('/kyc', authenticate, kycRoutes);
 router.use('/business-user', authenticate, businessUserRoutes);
+router.use('/payment', paymentRoutes);
 
 export default router;

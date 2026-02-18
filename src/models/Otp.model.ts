@@ -43,7 +43,6 @@ const otpSchema = new Schema<IOtp>(
 
 // TTL index to auto-remove expired OTPs (optional cleanup)
 otpSchema.index({ otpExpiration: 1 }, { expireAfterSeconds: 0 });
-otpSchema.index({ phoneNumber: 1 });
 
 /* =============================
    Model

@@ -1,15 +1,13 @@
+import 'dotenv/config';
 import express, { Express } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { connectDatabase } from './config/database';
 import { corsOptions } from './middleware/cors';
 import { errorHandler } from './middleware/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/swagger';
 import routes from './routes';
-
-// Load environment variables
-dotenv.config();
+import path from 'path';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +17,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(express.static(path.join(__dirname)));
 app.use('/', routes);
 app.use(errorHandler);
 

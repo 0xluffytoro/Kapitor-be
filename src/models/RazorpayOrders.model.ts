@@ -59,9 +59,6 @@ const razorpayOrderSchema = new Schema<IRazorpayOrder>(
    Indexes (performance)
 ============================= */
 
-razorpayOrderSchema.index({ order_id: 1 });
-razorpayOrderSchema.index({ payment_id: 1 });
-
 /* =============================
    Model
 ============================= */

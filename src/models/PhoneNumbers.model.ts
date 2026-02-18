@@ -34,12 +34,6 @@ const phoneNumbersSchema = new Schema<IPhoneNumber>(
 );
 
 /* =============================
-   Indexes (performance)
-============================= */
-
-phoneNumbersSchema.index({ phoneNumber: 1 }, { unique: true });
-
-/* =============================
    Model
 ============================= */
 

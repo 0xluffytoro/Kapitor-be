@@ -82,13 +82,6 @@ const userSchema = new Schema<IUser>(
 );
 
 /* =============================
-   Indexes (performance)
-============================= */
-
-userSchema.index({ email: 1 });
-userSchema.index({ walletAddress: 1 });
-
-/* =============================
    Model
 ============================= */
 
