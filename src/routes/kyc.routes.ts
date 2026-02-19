@@ -20,13 +20,18 @@ const router = Router();
  *           schema:
  *             type: object
  *             properties:
- *               documents:
- *                 type: object
- *                 additionalProperties: true
- *                 description: KYC documents payload
+ *               adhaarCard:
+ *                 type: string
+ *                 description: Adhaar card
+ *               drivingLicense:
+ *                 type: string
+ *                 description: Driving license
+ *               panCard:
+ *                 type: string
+ *                 description: PAN card
  *     responses:
  *       200:
- *         description: KYC completed successfully
+ *         description: Document submitted successfully, KYC under process
  *         content:
  *           application/json:
  *             schema:
@@ -34,9 +39,9 @@ const router = Router();
  *             example:
  *               success: true
  *               data:
- *                 message: KYC completed successfully
+ *                 message: Document submitted successfully, KYC under process
  *       400:
- *         description: Invalid user ID
+ *         description: At least one document is required
  *       401:
  *         description: Missing or invalid Authorization header
  */

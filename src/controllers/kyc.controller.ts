@@ -22,14 +22,25 @@ export async function submitKyc(
       return;
     }
 
-    const documents = req.body?.documents ?? null;
+    const { adhaarCard, drivingLicense, panCard } = req.body;
+
+    if (!adhaarCard && !drivingLicense && !panCard) {
+      sendError(res, 'At least one document is required', 400);
+      return;
+    }
 
     await Kyc.create({
       userId: uid,
-      documents,
+      adhaarCard: adhaarCard ?? null,
+      drivingLicense: drivingLicense ?? null,
+      panCard: panCard ?? null,
     });
 
-    sendSuccess(res, { message: 'KYC under process' }, 200);
+    sendSuccess(
+      res,
+      { message: 'Document submitted successfully, KYC under process' },
+      200
+    );
   } catch (error) {
     next(error);
   }

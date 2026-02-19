@@ -38,7 +38,6 @@ export async function createOrder(
     sendSuccess(
       res,
       {
-        message: 'OTP sent successfully',
         order,
       },
       200

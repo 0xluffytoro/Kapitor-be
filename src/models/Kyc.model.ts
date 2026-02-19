@@ -6,7 +6,9 @@ import { Document, model, Schema, Types } from 'mongoose';
 
 export interface IKyc extends Document {
   userId: Types.ObjectId;
-  documents: Record<string, unknown> | unknown[] | null;
+  adhaarCard: string;
+  drivingLicense: string;
+  panCard: string;
 }
 
 /* =============================
@@ -21,9 +23,17 @@ const kycSchema = new Schema<IKyc>(
       required: true,
       index: true,
     },
-    documents: {
-      type: Schema.Types.Mixed,
-      default: null,
+    adhaarCard: {
+      type: String,
+      required: false,
+    },
+    drivingLicense: {
+      type: String,
+      required: false,
+    },
+    panCard: {
+      type: String,
+      required: false,
     },
   },
   {
