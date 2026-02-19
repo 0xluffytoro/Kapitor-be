@@ -9,6 +9,7 @@ export interface IKyc extends Document {
   adhaarCard: string;
   drivingLicense: string;
   panCard: string;
+  status: 'pending' | 'verified' | 'rejected';
 }
 
 /* =============================
@@ -33,6 +34,12 @@ const kycSchema = new Schema<IKyc>(
     },
     panCard: {
       type: String,
+      required: false,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'verified', 'rejected'],
+      default: 'pending',
       required: false,
     },
   },

@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { Otp } from '../models/Otp.model';
 import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { sendSuccess, sendError } from '../utils/response';
+import { Kyc } from '../models/Kyc.model';
+import { User } from '../models/User.model';
 
 const OTP_EXPIRATION_SECONDS = 300; // 5 minutes
 const OTP_LENGTH = 6;
@@ -166,7 +168,17 @@ export async function verifyOTP(
     const token = jwt.sign({ uid, mobileNumber: formattedPhone }, jwtSecret, {
       expiresIn: '24h',
     });
-    sendSuccess(res, { token }, 200);
+
+    const userRecord = await User.findOne({
+      phoneNumber: formattedPhone,
+    }).select('_id');
+
+    const kycRecord = userRecord
+      ? await Kyc.findOne({ userId: userRecord._id }).select('status')
+      : null;
+    const kycStatus = kycRecord?.status ?? 'pending';
+
+    sendSuccess(res, { token, kycStatus }, 200);
   } catch (error) {
     next(error);
   }
