@@ -13,6 +13,8 @@ import {
   OTP_EXPIRATION_SECONDS,
 } from '../services/otp.service';
 import { transferFromUserWallet } from '../services/user-wallet.service';
+import { ethers } from 'ethers';
+import ERC20_ABI from '../utils/ERC20ABI';
 
 /**
  * Get authenticated user's details
@@ -379,6 +381,97 @@ export async function verifyTransaction(
       },
       200
     );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get authenticated user's wallet balance
+ * GET /user/balance
+ */
+export async function getBalance(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+
+    const user = await User.findById(uid).select('walletAddress').lean();
+    if (!user?.walletAddress) {
+      sendError(res, 'User wallet address not found', 404);
+      return;
+    }
+
+    const rpcUrl = process.env.ETH_RPC_URL;
+    if (!rpcUrl) {
+      sendError(res, 'ETH_RPC_URL is not configured', 500);
+      return;
+    }
+
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const nativeBalance = await provider.getBalance(user.walletAddress);
+
+    let tokenBalance: string | null = null;
+    const tokenAddress = process.env.KPT_TOKEN_ADDRESS;
+    if (tokenAddress) {
+      const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+      const decimalsEnv = process.env.KPT_TOKEN_DECIMALS;
+      const decimals = decimalsEnv ? Number(decimalsEnv) : 18;
+      const raw = await contract.balanceOf(user.walletAddress);
+      tokenBalance = ethers.formatUnits(raw, decimals);
+    }
+
+    sendSuccess(
+      res,
+      {
+        walletAddress: user.walletAddress,
+        nativeBalanceWei: nativeBalance.toString(),
+        nativeBalance: ethers.formatEther(nativeBalance),
+        tokenBalance,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get authenticated user's transactions
+ * GET /user/transactions
+ */
+export async function getUserTransactions(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+
+    const limitParam = Number(req.query.limit);
+    const limit =
+      Number.isFinite(limitParam) && limitParam > 0
+        ? Math.min(limitParam, 100)
+        : 50;
+
+    const transactions = await Transaction.find({ userId: uid })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    sendSuccess(res, { transactions }, 200);
   } catch (error) {
     next(error);
   }

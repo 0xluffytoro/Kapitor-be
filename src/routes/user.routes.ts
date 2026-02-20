@@ -3,6 +3,8 @@ import {
   createUser,
   getDetails,
   getRecentTransactions,
+  getBalance,
+  getUserTransactions,
   sendTransaction,
   verifyTransaction,
 } from '../controllers/user.controller';
@@ -96,6 +98,59 @@ router.post('/', createUser);
  *         description: User not found
  */
 router.get('/details', getDetails);
+
+/**
+ * @openapi
+ * /user/balance:
+ *   get:
+ *     summary: Get user wallet balance
+ *     description: Returns the authenticated user's wallet balance via RPC.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wallet balance
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ *       404:
+ *         description: User wallet not found
+ */
+router.get('/balance', getBalance);
+
+/**
+ * @openapi
+ * /user/transactions:
+ *   get:
+ *     summary: Get user transactions
+ *     description: Returns the authenticated user's transactions.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: number
+ *           example: 50
+ *     responses:
+ *       200:
+ *         description: User transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ */
+router.get('/transactions', getUserTransactions);
 
 /**
  * @openapi
