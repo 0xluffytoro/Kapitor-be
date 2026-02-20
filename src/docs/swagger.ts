@@ -11,7 +11,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'https://kapitor-be.onrender.com',
         description: 'Development server',
       },
     ],
@@ -82,6 +82,7 @@ const options: swaggerJsdoc.Options = {
       { name: 'User', description: 'User profile endpoints' },
       { name: 'KYC', description: 'KYC submission endpoints' },
       { name: 'BusinessUser', description: 'Business user endpoints' },
+      { name: 'Payment', description: 'Payment processing endpoints' },
     ],
   },
   apis: [
@@ -93,6 +94,7 @@ const options: swaggerJsdoc.Options = {
       __dirname,
       `../routes/business-user.routes${path.extname(__filename)}`
     ),
+    path.join(__dirname, `../routes/payment.routes${path.extname(__filename)}`),
   ],
 };
 

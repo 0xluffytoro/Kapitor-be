@@ -4,6 +4,7 @@ import Razorpay from 'razorpay';
 import { RazorpayOrders } from '../models/RazorpayOrders.model';
 import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils';
 import { getInrAmountInUsdc, mintTo } from '../services/payment.service';
+import { Transaction } from '../models/Transaction.model';
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || '',
@@ -53,12 +54,26 @@ export async function paymentSuccess(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { amount, address } = req.body;
+    const { amount, address, userId } = req.body;
+    if (!userId) {
+      sendError(res, 'userId is required', 400);
+      return;
+    }
     const usdAmount = await getInrAmountInUsdc(amount);
     const result = await mintTo(
       address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
       usdAmount.toString()
     );
+    if (result?.txHash) {
+      await Transaction.create({
+        userId,
+        txHash: result.txHash,
+        toAddress: address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+        inrAmount: Number(amount),
+        usdcAmount: Number(usdAmount),
+        source: 'payment-success',
+      });
+    }
     sendSuccess(
       res,
       { message: 'Kapitor Token Payment successful', result },

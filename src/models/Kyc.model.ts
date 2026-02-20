@@ -38,7 +38,7 @@ const kycSchema = new Schema<IKyc>(
     },
     status: {
       type: String,
-      enum: ['pending', 'verified', 'rejected'],
+      enum: ['pending', 'verified', 'rejected', 'in_review'],
       default: 'pending',
       required: false,
     },

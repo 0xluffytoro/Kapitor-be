@@ -11,6 +11,7 @@ export interface IRazorpayOrder extends Document {
   receipt: string;
   status: string;
   payment_id?: string;
+  userId: Schema.Types.ObjectId;
 }
 
 /* =============================
@@ -46,6 +47,12 @@ const razorpayOrderSchema = new Schema<IRazorpayOrder>(
     },
     payment_id: {
       type: String,
+      index: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
       index: true,
     },
   },

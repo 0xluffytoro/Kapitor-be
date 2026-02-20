@@ -61,30 +61,30 @@ router.post('/create-order', createOrder);
 /**
  * @openapi
  * /payment/payment-success:
- *   get:
+ *   post:
  *     summary: Mark payment successful
  *     description: Updates an order with payment details after successful payment.
  *     tags:
  *       - Payment
- *     parameters:
- *       - in: query
- *         name: order_id
- *         required: true
- *         schema:
- *           type: string
- *         example: "order_OYqXa85ILOfhH9"
- *       - in: query
- *         name: payment_id
- *         required: false
- *         schema:
- *           type: string
- *         example: "pay_OYqXio9j7ijhmi"
- *       - in: query
- *         name: status
- *         required: false
- *         schema:
- *           type: string
- *         example: "paid"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - userId
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 280
+ *               address:
+ *                 type: string
+ *                 example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+ *               userId:
+ *                 type: string
+ *                 example: "64e7c2b9d3f2a5b9c9b8fabc"
  *     responses:
  *       200:
  *         description: Order updated
