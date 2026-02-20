@@ -4,6 +4,7 @@ import { sendSuccess, sendError } from '../utils/response';
 import { AuthRequest } from '../middleware/auth';
 import mongoose from 'mongoose';
 import { PhoneNumbers } from '../models/PhoneNumbers.model';
+import { Transaction } from '../models/Transaction.model';
 
 /**
  * Get authenticated user's details
@@ -141,6 +142,46 @@ export async function createUser(
         role: user.role,
       },
       201
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get recent transactions for authenticated user
+ * GET /user/recent-transactions
+ * Headers: Authorization: Bearer <token>
+ */
+export async function getRecentTransactions(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+
+    const transactions = await Transaction.find({ userId: uid })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    const recentAddresses = Array.from(
+      new Set(transactions.map(t => t.toAddress))
+    );
+
+    sendSuccess(
+      res,
+      {
+        recentAddresses,
+        transactions,
+      },
+      200
     );
   } catch (error) {
     next(error);

@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { createUser, getDetails } from '../controllers/user.controller';
+import {
+  createUser,
+  getDetails,
+  getRecentTransactions,
+} from '../controllers/user.controller';
 
 const router = Router();
 
@@ -90,5 +94,27 @@ router.post('/', createUser);
  *         description: User not found
  */
 router.get('/details', getDetails);
+
+/**
+ * @openapi
+ * /user/recent-transactions:
+ *   get:
+ *     summary: Get recent transactions
+ *     description: Returns latest 10 transactions for the authenticated user and recent recipient addresses.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recent transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ */
+router.get('/recent-transactions', getRecentTransactions);
 
 export default router;
