@@ -3,6 +3,8 @@ import {
   createUser,
   getDetails,
   getRecentTransactions,
+  sendTransaction,
+  verifyTransaction,
 } from '../controllers/user.controller';
 
 const router = Router();
@@ -116,5 +118,85 @@ router.get('/details', getDetails);
  *         description: Missing or invalid token
  */
 router.get('/recent-transactions', getRecentTransactions);
+
+const transactionRouter = Router();
+
+/**
+ * @openapi
+ * /user/transaction/send-transaction:
+ *   post:
+ *     summary: Send transaction OTP
+ *     description: Creates a pending transaction and sends an OTP to the user's phone.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - recipientAddress
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 10
+ *               recipientAddress:
+ *                 type: string
+ *                 example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+ *     responses:
+ *       200:
+ *         description: Pending transaction created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ */
+transactionRouter.post('/send-transaction', sendTransaction);
+
+/**
+ * @openapi
+ * /user/transaction/verify-transaction:
+ *   post:
+ *     summary: Verify transaction OTP
+ *     description: Verifies OTP and executes the pending transaction.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - transactionId
+ *               - otp
+ *             properties:
+ *               transactionId:
+ *                 type: string
+ *                 example: "64e7c2b9d3f2a5b9c9b8fabc"
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Transaction verified and sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ */
+transactionRouter.post('/verify-transaction', verifyTransaction);
+
+router.use('/transaction', transactionRouter);
 
 export default router;

@@ -8,9 +8,10 @@ export interface ITransaction extends Document {
   userId: Schema.Types.ObjectId;
   txHash: string;
   toAddress: string;
-  inrAmount: number;
-  usdcAmount: number;
-  source: 'payment-success';
+  inrAmount?: number;
+  usdcAmount?: number;
+  tokenAmount?: number;
+  source: 'payment-success' | 'user-transaction';
 }
 
 /* =============================
@@ -38,17 +39,19 @@ const transactionSchema = new Schema<ITransaction>(
     },
     inrAmount: {
       type: Number,
-      required: true,
       min: 0,
     },
     usdcAmount: {
       type: Number,
-      required: true,
+      min: 0,
+    },
+    tokenAmount: {
+      type: Number,
       min: 0,
     },
     source: {
       type: String,
-      enum: ['payment-success'],
+      enum: ['payment-success', 'user-transaction'],
       required: true,
       default: 'payment-success',
     },

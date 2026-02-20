@@ -6,33 +6,11 @@ import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { sendSuccess, sendError } from '../utils/response';
 import { Kyc } from '../models/Kyc.model';
 import { User } from '../models/User.model';
-
-const OTP_EXPIRATION_SECONDS = 300; // 5 minutes
-const OTP_LENGTH = 6;
-
-/**
- * Generate a random numeric OTP
- */
-function generateOTP(): string {
-  const digits = '0123456789';
-  let otp = '';
-  for (let i = 0; i < OTP_LENGTH; i++) {
-    otp += digits[Math.floor(Math.random() * 10)];
-  }
-  return otp;
-}
-
-/**
- * Format phone number to E.164 (Twilio requirement)
- * Expects input like 9876543210 or +919876543210
- */
-function toE164(phoneNumber: string): string {
-  let cleaned = phoneNumber.replace(/\D/g, '');
-  if (!cleaned.startsWith('91') && cleaned.length === 10) {
-    cleaned = '91' + cleaned;
-  }
-  return '+' + cleaned;
-}
+import {
+  generateOTP,
+  toE164,
+  OTP_EXPIRATION_SECONDS,
+} from '../services/otp.service';
 
 /**
  * Send OTP to phone number

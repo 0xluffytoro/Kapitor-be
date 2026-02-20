@@ -15,6 +15,8 @@ export interface IUser extends Document {
   zipCode: string;
   country: string;
   walletAddress: string;
+  walletId?: string;
+  externalServerKeyShares?: unknown;
   role: 'user' | 'admin';
 }
 
@@ -67,6 +69,13 @@ const userSchema = new Schema<IUser>(
       type: String,
       unique: true,
       index: true,
+    },
+    walletId: {
+      type: String,
+      trim: true,
+    },
+    externalServerKeyShares: {
+      type: Schema.Types.Mixed,
     },
 
     role: {

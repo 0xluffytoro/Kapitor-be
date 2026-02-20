@@ -1,10 +1,18 @@
 import { Response, NextFunction } from 'express';
+import twilio from 'twilio';
 import { User } from '../models/User.model';
 import { sendSuccess, sendError } from '../utils/response';
 import { AuthRequest } from '../middleware/auth';
 import mongoose from 'mongoose';
 import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { Transaction } from '../models/Transaction.model';
+import { PendingTransaction } from '../models/PendingTransaction.model';
+import {
+  generateOTP,
+  toE164,
+  OTP_EXPIRATION_SECONDS,
+} from '../services/otp.service';
+import { transferFromUserWallet } from '../services/user-wallet.service';
 
 /**
  * Get authenticated user's details
@@ -120,6 +128,8 @@ export async function createUser(
       zipCode,
       country,
       walletAddress: evmWallet.accountAddress,
+      walletId: evmWallet.walletId,
+      externalServerKeyShares: evmWallet.externalServerKeyShares,
       role: 'user',
     });
 
@@ -180,6 +190,192 @@ export async function getRecentTransactions(
       {
         recentAddresses,
         transactions,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Send transaction OTP and create pending transaction
+ * POST /user/transaction/send-transaction
+ */
+export async function sendTransaction(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+    const { amount, recipientAddress } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+    if (!amount || Number(amount) <= 0) {
+      sendError(res, 'amount must be greater than zero', 400);
+      return;
+    }
+    if (!recipientAddress) {
+      sendError(res, 'recipientAddress is required', 400);
+      return;
+    }
+
+    const user = await User.findById(uid).select('phoneNumber').lean();
+    if (!user?.phoneNumber) {
+      sendError(res, 'User phone number not found', 404);
+      return;
+    }
+
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+    if (!accountSid || !authToken || !fromNumber) {
+      sendError(res, 'Twilio is not configured', 503);
+      return;
+    }
+
+    const otp = generateOTP();
+    const otpExpiration = new Date(Date.now() + OTP_EXPIRATION_SECONDS * 1000);
+
+    const pending = await PendingTransaction.create({
+      userId: uid,
+      amount: Number(amount),
+      recipientAddress,
+      otp,
+      otpExpiration,
+      status: 'pending',
+    });
+
+    try {
+      const client = twilio(accountSid, authToken);
+      const toNumber = toE164(user.phoneNumber);
+      const message = `Your Kapitor transaction code is: ${otp}. Valid for ${OTP_EXPIRATION_SECONDS} seconds.`;
+
+      await client.messages.create({
+        body: message,
+        from: fromNumber,
+        to: toNumber,
+      });
+    } catch (error) {
+      await PendingTransaction.deleteOne({ _id: pending._id });
+      if (error && typeof error === 'object' && 'code' in error) {
+        const twilioError = error as {
+          code?: number;
+          status?: number;
+          message?: string;
+        };
+        if (twilioError.code === 21608 || twilioError.code === 21211) {
+          sendError(res, 'Invalid phone number', 400);
+          return;
+        }
+        if (twilioError.status === 400) {
+          sendError(res, twilioError.message || 'Bad request', 400);
+          return;
+        }
+      }
+      throw error;
+    }
+
+    sendSuccess(
+      res,
+      {
+        pendingTransactionId: pending._id,
+        expiresIn: OTP_EXPIRATION_SECONDS,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Verify transaction OTP and execute transfer
+ * POST /user/transaction/verify-transaction
+ */
+export async function verifyTransaction(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+    const { transactionId, otp } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+    if (!transactionId) {
+      sendError(res, 'transactionId is required', 400);
+      return;
+    }
+    if (!otp) {
+      sendError(res, 'otp is required', 400);
+      return;
+    }
+
+    const pending = await PendingTransaction.findOne({
+      _id: transactionId,
+      userId: uid,
+      status: 'pending',
+    });
+
+    if (!pending) {
+      sendError(res, 'Pending transaction not found', 404);
+      return;
+    }
+
+    if (new Date() > pending.otpExpiration) {
+      pending.status = 'failed';
+      await pending.save();
+      sendError(res, 'OTP has expired. Please try again.', 400);
+      return;
+    }
+
+    if (pending.otp !== otp) {
+      sendError(res, 'Invalid OTP', 400);
+      return;
+    }
+
+    const user = await User.findById(uid)
+      .select('walletAddress externalServerKeyShares')
+      .lean();
+    if (!user?.walletAddress || !user.externalServerKeyShares) {
+      sendError(res, 'User wallet is not configured', 400);
+      return;
+    }
+
+    const result = await transferFromUserWallet({
+      accountAddress: user.walletAddress,
+      recipientAddress: pending.recipientAddress,
+      amount: pending.amount,
+      externalServerKeyShares: user.externalServerKeyShares,
+    });
+
+    const tx = await Transaction.create({
+      userId: uid,
+      txHash: result.txHash,
+      toAddress: pending.recipientAddress,
+      tokenAmount: pending.amount,
+      source: 'user-transaction',
+    });
+
+    pending.status = 'verified';
+    pending.txHash = result.txHash;
+    await pending.save();
+
+    sendSuccess(
+      res,
+      {
+        message: 'Transaction verified and sent',
+        transaction: tx,
+        result,
       },
       200
     );
