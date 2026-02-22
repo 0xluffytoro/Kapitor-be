@@ -17,8 +17,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": ">=20.0.0 <25.0.0",
-    "pnpm": ">=10.0.0"
+    "node": ">=20.0.0 <25.0.0"
   },
   "dependencies": {
     "@dynamic-labs-wallet/node": "^0.0.268",
