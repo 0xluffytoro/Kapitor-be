@@ -2,7 +2,7 @@
   "name": "kapitor",
   "version": "1.0.0",
   "description": "Express.js app with TypeScript",
-  "main": "dist/index.js",
+  "main": "src/server.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
