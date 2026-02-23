@@ -46,6 +46,6 @@ router.use('/otp', otpRoutes);
 router.use('/user', authenticate, userRoutes);
 router.use('/kyc', authenticate, kycRoutes);
 router.use('/business-user', authenticate, businessUserRoutes);
-router.use('/payment', paymentRoutes);
+router.use('/payment', authenticate, paymentRoutes);
 
 export default router;

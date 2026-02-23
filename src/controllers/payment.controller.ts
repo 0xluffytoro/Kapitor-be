@@ -5,6 +5,7 @@ import { RazorpayOrders } from '../models/RazorpayOrders.model';
 import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils';
 import { getInrAmountInUsdc, mintTo } from '../services/payment.service';
 import { Transaction } from '../models/Transaction.model';
+import { AuthRequest } from '../middleware/auth';
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || '',
@@ -12,11 +13,16 @@ const razorpay = new Razorpay({
 });
 
 export async function createOrder(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
+    const uid = req.uid;
+    if (!uid) {
+      sendError(res, 'Unauthorized', 401);
+      return;
+    }
     const { amount, currency, receipt, notes } = req.body;
 
     const options = {
@@ -35,6 +41,7 @@ export async function createOrder(
       receipt: order.receipt,
       status: order.status ?? 'created',
       payment_id: undefined,
+      userId: uid,
     });
     sendSuccess(
       res,
@@ -49,16 +56,17 @@ export async function createOrder(
 }
 
 export async function paymentSuccess(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const { amount, address, userId } = req.body;
-    if (!userId) {
-      sendError(res, 'userId is required', 400);
+    const uid = req.uid;
+    if (!uid) {
+      sendError(res, 'Unauthorized', 401);
       return;
     }
+    const { amount, address } = req.body;
     const usdAmount = await getInrAmountInUsdc(amount);
     const result = await mintTo(
       address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
@@ -66,7 +74,7 @@ export async function paymentSuccess(
     );
     if (result?.txHash) {
       await Transaction.create({
-        userId,
+        userId: uid,
         txHash: result.txHash,
         toAddress: address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
         inrAmount: Number(amount),

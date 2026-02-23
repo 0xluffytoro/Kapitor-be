@@ -8,6 +8,7 @@ export interface IBusinessUser extends Document {
   ownerName: string;
   ownerShipPercentage: number;
   walletAddress: string;
+  phoneNumber: string;
 }
 
 const businessUserSchema = new Schema<IBusinessUser>(
@@ -40,6 +41,12 @@ const businessUserSchema = new Schema<IBusinessUser>(
     walletAddress: {
       type: String,
       required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
     },
   },
   {

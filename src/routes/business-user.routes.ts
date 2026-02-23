@@ -29,6 +29,7 @@ const router = Router();
  *               - dateOfIncorporation
  *               - ownerName
  *               - ownerShipPercentage
+ *               - phoneNumber
  *             properties:
  *               businessName:
  *                 type: string
@@ -42,6 +43,8 @@ const router = Router();
  *                 type: string
  *               ownerShipPercentage:
  *                 type: number
+ *               phoneNumber:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Business user created

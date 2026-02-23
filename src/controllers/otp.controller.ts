@@ -5,6 +5,7 @@ import { Otp } from '../models/Otp.model';
 import { sendSuccess, sendError } from '../utils/response';
 import { Kyc } from '../models/Kyc.model';
 import { User } from '../models/User.model';
+import { BusinessUser } from '../models/BusinessUser.model';
 import {
   generateOTP,
   toE164,
@@ -122,19 +123,39 @@ export async function verifyOTP(
     // Format phone number to E.164 format for consistency
     const formattedPhone = toE164(phoneNumber);
 
-    // Find or create user by phone number
-    let userRecord = await User.findOne({
+    const businessUserRecord = await BusinessUser.findOne({
       phoneNumber: formattedPhone,
     }).select('_id');
 
-    if (!userRecord) {
-      userRecord = await User.create({
-        phoneNumber: formattedPhone,
-        role: 'user',
-      });
-    }
+    let uid = '';
+    let kycStatus = 'pending';
+    let userType: 'user' | 'business-user' = 'user';
 
-    const uid = userRecord._id.toString();
+    if (businessUserRecord) {
+      uid = businessUserRecord._id.toString();
+      userType = 'business-user';
+    } else {
+      // Find or create user by phone number
+      let userRecord = await User.findOne({
+        phoneNumber: formattedPhone,
+      }).select('_id');
+
+      if (!userRecord) {
+        userRecord = await User.create({
+          phoneNumber: formattedPhone,
+          role: 'user',
+        });
+      }
+
+      uid = userRecord._id.toString();
+
+      const kycRecord = await Kyc.findOneAndUpdate(
+        { userId: userRecord._id },
+        { $setOnInsert: { userId: userRecord._id, status: 'pending' } },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      ).select('status');
+      kycStatus = kycRecord?.status ?? 'pending';
+    }
 
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET;
@@ -147,14 +168,15 @@ export async function verifyOTP(
       expiresIn: '24h',
     });
 
-    const kycRecord = await Kyc.findOneAndUpdate(
-      { userId: userRecord._id },
-      { $setOnInsert: { userId: userRecord._id, status: 'pending' } },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).select('status');
-    const kycStatus = kycRecord?.status ?? 'pending';
+    const response: any = {
+      token,
+      userType,
+    };
+    if (userType === 'user') {
+      response['kycStatus'] = kycStatus;
+    }
 
-    sendSuccess(res, { token, kycStatus }, 200);
+    sendSuccess(res, { ...response }, 200);
   } catch (error) {
     next(error);
   }

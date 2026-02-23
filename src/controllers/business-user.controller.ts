@@ -1,18 +1,27 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { BusinessUser } from '../models/BusinessUser.model';
 import { sendSuccess, sendError } from '../utils/response';
 import mongoose from 'mongoose';
+import { AuthRequest } from '../middleware/auth';
+import { User } from '../models/User.model';
+import { toE164 } from '../services/otp.service';
 
 /**
  * Create business user account
  * POST /business-user
  */
 export async function createBusinessUser(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
+    const uid = req.uid;
+    if (!uid) {
+      sendError(res, 'Unauthorized', 401);
+      return;
+    }
+
     const {
       businessName,
       businessEntitiyType,
@@ -20,7 +29,18 @@ export async function createBusinessUser(
       dateOfIncorporation,
       ownerName,
       ownerShipPercentage,
+      phoneNumber,
     } = req.body;
+
+    if (!phoneNumber) {
+      sendError(res, 'phoneNumber is required', 400);
+      return;
+    }
+
+    const existingUser = await User.findById(uid).select('_id');
+    if (existingUser) {
+      await User.findByIdAndDelete(uid);
+    }
 
     const { DynamicEvmWalletClient } =
       await import('@dynamic-labs-wallet/node-evm');
@@ -41,6 +61,7 @@ export async function createBusinessUser(
     });
 
     const businessUser = await BusinessUser.create({
+      _id: uid,
       businessName,
       businessEntitiyType,
       companyRegistration,
@@ -48,6 +69,7 @@ export async function createBusinessUser(
       ownerName,
       ownerShipPercentage,
       walletAddress: evmWallet.accountAddress,
+      phoneNumber: toE164(phoneNumber),
     });
 
     sendSuccess(
@@ -61,6 +83,7 @@ export async function createBusinessUser(
         ownerName: businessUser.ownerName,
         ownerShipPercentage: businessUser.ownerShipPercentage,
         walletAddress: evmWallet.accountAddress,
+        phoneNumber: businessUser.phoneNumber,
       },
       201
     );
@@ -74,7 +97,7 @@ export async function createBusinessUser(
  * GET /business-user/:id
  */
 export async function getBusinessUser(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
@@ -104,6 +127,7 @@ export async function getBusinessUser(
         ownerName: businessUser.ownerName,
         ownerShipPercentage: businessUser.ownerShipPercentage,
         walletAddress: businessUser.walletAddress,
+        phoneNumber: businessUser.phoneNumber,
       },
       200
     );

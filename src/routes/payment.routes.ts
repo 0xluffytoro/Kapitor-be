@@ -15,6 +15,8 @@ const router = Router();
  *     description: Creates a Razorpay order and stores it in the database.
  *     tags:
  *       - Payment
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -66,6 +68,8 @@ router.post('/create-order', createOrder);
  *     description: Updates an order with payment details after successful payment.
  *     tags:
  *       - Payment
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -74,7 +78,6 @@ router.post('/create-order', createOrder);
  *             type: object
  *             required:
  *               - amount
- *               - userId
  *             properties:
  *               amount:
  *                 type: number
@@ -82,9 +85,6 @@ router.post('/create-order', createOrder);
  *               address:
  *                 type: string
  *                 example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
- *               userId:
- *                 type: string
- *                 example: "64e7c2b9d3f2a5b9c9b8fabc"
  *     responses:
  *       200:
  *         description: Order updated
@@ -107,6 +107,8 @@ router.post('/payment-success', paymentSuccess);
  *     description: Verifies payment and updates the order status.
  *     tags:
  *       - Payment
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -116,15 +118,15 @@ router.post('/payment-success', paymentSuccess);
  *             required:
  *               - order_id
  *             properties:
- *               order_id:
+ *               razorpay_order_id:
  *                 type: string
- *                 example: "order_OYqXa85ILOfhH9"
- *               payment_id:
+ *                 example: ""
+ *               razorpay_payment_id:
  *                 type: string
- *                 example: "pay_OYqXio9j7ijhmi"
- *               status:
+ *                 example: ""
+ *               razorpay_signature:
  *                 type: string
- *                 example: "paid"
+ *                 example: ""
  *     responses:
  *       200:
  *         description: Order updated
