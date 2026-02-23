@@ -46,7 +46,7 @@ const router = Router();
  *                 type: string
  *               phoneNumber:
  *                type: string
- *                 example: "+919876543210"
+ *                example: "+919876543210"
  *     responses:
  *       201:
  *         description: User created
