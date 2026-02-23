@@ -112,10 +112,12 @@ export async function createUser(
     const { ThresholdSignatureScheme } =
       await import('@dynamic-labs-wallet/node');
 
+    await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
+
     const evmWallet = await client.createWalletAccount({
       thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
       password: process.env.WALLET_PASSWORD,
-      backUpToClientShareService: false,
+      backUpToClientShareService: true,
     });
 
     const user = await User.create({

@@ -28,13 +28,15 @@ export async function createBusinessUser(
       enableMPCAccelerator: false,
     });
 
+    await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
+
     const { ThresholdSignatureScheme } =
       await import('@dynamic-labs-wallet/node');
 
     const evmWallet = await client.createWalletAccount({
       thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
       password: process.env.WALLET_PASSWORD,
-      backUpToClientShareService: false,
+      backUpToClientShareService: true,
     });
 
     const businessUser = await BusinessUser.create({
