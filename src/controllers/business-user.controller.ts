@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { BusinessUser } from '../models/BusinessUser.model';
-import { sendSuccess } from '../utils/response';
+import { sendSuccess, sendError } from '../utils/response';
+import mongoose from 'mongoose';
 
 /**
  * Create business user account
@@ -62,6 +63,49 @@ export async function createBusinessUser(
         walletAddress: evmWallet.accountAddress,
       },
       201
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get business user account
+ * GET /business-user/:id
+ */
+export async function getBusinessUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      sendError(res, 'Invalid business user ID', 400);
+      return;
+    }
+
+    const businessUser = await BusinessUser.findById(id).lean();
+
+    if (!businessUser) {
+      sendError(res, 'Business user not found', 404);
+      return;
+    }
+
+    sendSuccess(
+      res,
+      {
+        id: businessUser._id,
+        businessName: businessUser.businessName,
+        businessEntitiyType: businessUser.businessEntitiyType,
+        companyRegistration: businessUser.companyRegistration,
+        dateOfIncorporation: businessUser.dateOfIncorporation,
+        ownerName: businessUser.ownerName,
+        ownerShipPercentage: businessUser.ownerShipPercentage,
+        walletAddress: businessUser.walletAddress,
+      },
+      200
     );
   } catch (error) {
     next(error);

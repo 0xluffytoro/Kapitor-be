@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { createBusinessUser } from '../controllers/business-user.controller';
+import {
+  createBusinessUser,
+  getBusinessUser,
+} from '../controllers/business-user.controller';
 
 const router = Router();
 
@@ -50,5 +53,37 @@ const router = Router();
  *         description: Missing or invalid Authorization header
  */
 router.post('/', createBusinessUser);
+
+/**
+ * @openapi
+ * /business-user/{id}:
+ *   get:
+ *     summary: Get business user account
+ *     description: Returns a business user account by ID
+ *     tags:
+ *       - BusinessUser
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Business user details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid business user ID
+ *       401:
+ *         description: Missing or invalid Authorization header
+ *       404:
+ *         description: Business user not found
+ */
+router.get('/:id', getBusinessUser);
 
 export default router;

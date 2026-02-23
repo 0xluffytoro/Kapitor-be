@@ -4,9 +4,9 @@ import { User } from '../models/User.model';
 import { sendSuccess, sendError } from '../utils/response';
 import { AuthRequest } from '../middleware/auth';
 import mongoose from 'mongoose';
-import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { Transaction } from '../models/Transaction.model';
 import { PendingTransaction } from '../models/PendingTransaction.model';
+import { Kyc } from '../models/Kyc.model';
 import {
   generateOTP,
   toE164,
@@ -41,6 +41,11 @@ export async function getDetails(
       return;
     }
 
+    const kycRecord = await Kyc.findOne({ userId: user._id })
+      .select('status')
+      .lean();
+    const kycStatus = kycRecord?.status ?? 'pending';
+
     // Return user with address stored in separate fields (address, city, state, zipCode, country)
     sendSuccess(
       res,
@@ -57,6 +62,7 @@ export async function getDetails(
         country: user.country,
         walletAddress: user.walletAddress,
         role: user.role,
+        kycStatus,
       },
       200
     );
@@ -94,66 +100,87 @@ export async function createUser(
       return;
     }
 
-    const existingUser = await User.findOne({ phoneNumber })
-      .select('-__v')
-      .lean();
+    const existingUser = phoneNumber
+      ? await User.findOne({ phoneNumber, _id: { $ne: uid } })
+          .select('_id')
+          .lean()
+      : null;
     if (existingUser) {
       sendError(res, 'User already exists', 409);
       return;
     }
 
-    const { DynamicEvmWalletClient } =
-      await import('@dynamic-labs-wallet/node-evm');
-    const client = new DynamicEvmWalletClient({
-      environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
-      enableMPCAccelerator: false,
-    });
+    const currentUser = await User.findById(uid).select('walletAddress role');
 
-    const { ThresholdSignatureScheme } =
-      await import('@dynamic-labs-wallet/node');
+    let walletData:
+      | {
+          walletAddress: string;
+          walletId: string;
+          externalServerKeyShares: unknown;
+        }
+      | undefined;
 
-    await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
+    if (!currentUser?.walletAddress) {
+      const { DynamicEvmWalletClient } =
+        await import('@dynamic-labs-wallet/node-evm');
+      const client = new DynamicEvmWalletClient({
+        environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
+        enableMPCAccelerator: false,
+      });
 
-    const evmWallet = await client.createWalletAccount({
-      thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
-      password: process.env.WALLET_PASSWORD,
-      backUpToClientShareService: true,
-    });
+      const { ThresholdSignatureScheme } =
+        await import('@dynamic-labs-wallet/node');
 
-    const user = await User.create({
-      _id: uid,
-      name,
-      dob,
-      nationality,
-      phoneNumber,
-      address,
-      city,
-      state,
-      zipCode,
-      country,
-      walletAddress: evmWallet.accountAddress,
-      walletId: evmWallet.walletId,
-      externalServerKeyShares: evmWallet.externalServerKeyShares,
-      role: 'user',
-    });
+      await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
 
-    await PhoneNumbers.updateOne({ _id: uid }, { $set: { userId: user._id } });
+      const evmWallet = await client.createWalletAccount({
+        thresholdSignatureScheme: ThresholdSignatureScheme.TWO_OF_TWO,
+        password: process.env.WALLET_PASSWORD,
+        backUpToClientShareService: true,
+      });
+
+      walletData = {
+        walletAddress: evmWallet.accountAddress,
+        walletId: evmWallet.walletId,
+        externalServerKeyShares: evmWallet.externalServerKeyShares,
+      };
+    }
+
+    const user = await User.findByIdAndUpdate(
+      uid,
+      {
+        $set: {
+          name,
+          dob,
+          nationality,
+          phoneNumber,
+          address,
+          city,
+          state,
+          zipCode,
+          country,
+          ...(walletData ?? {}),
+          role: currentUser?.role ?? 'user',
+        },
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
 
     sendSuccess(
       res,
       {
-        id: user._id,
-        name: user.name,
-        dob: user.dob,
-        nationality: user.nationality,
-        phoneNumber: user.phoneNumber,
-        address: user.address,
-        city: user.city,
-        state: user.state,
-        zipCode: user.zipCode,
-        country: user.country,
-        walletAddress: user.walletAddress,
-        role: user.role,
+        id: user?._id,
+        name: user?.name,
+        dob: user?.dob,
+        nationality: user?.nationality,
+        phoneNumber: user?.phoneNumber,
+        address: user?.address,
+        city: user?.city,
+        state: user?.state,
+        zipCode: user?.zipCode,
+        country: user?.country,
+        walletAddress: user?.walletAddress,
+        role: user?.role,
       },
       201
     );

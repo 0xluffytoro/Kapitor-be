@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import twilio from 'twilio';
 import jwt from 'jsonwebtoken';
 import { Otp } from '../models/Otp.model';
-import { PhoneNumbers } from '../models/PhoneNumbers.model';
 import { sendSuccess, sendError } from '../utils/response';
 import { Kyc } from '../models/Kyc.model';
 import { User } from '../models/User.model';
@@ -123,18 +122,19 @@ export async function verifyOTP(
     // Format phone number to E.164 format for consistency
     const formattedPhone = toE164(phoneNumber);
 
-    // Save phone number only and use PhoneNumbers _id as uid
-    let phoneRecord = await PhoneNumbers.findOne({
+    // Find or create user by phone number
+    let userRecord = await User.findOne({
       phoneNumber: formattedPhone,
-    });
+    }).select('_id');
 
-    if (!phoneRecord) {
-      phoneRecord = await PhoneNumbers.create({
+    if (!userRecord) {
+      userRecord = await User.create({
         phoneNumber: formattedPhone,
+        role: 'user',
       });
     }
 
-    const uid = phoneRecord._id.toString();
+    const uid = userRecord._id.toString();
 
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET;
@@ -143,17 +143,15 @@ export async function verifyOTP(
       return;
     }
 
-    const token = jwt.sign({ uid, mobileNumber: formattedPhone }, jwtSecret, {
+    const token = jwt.sign({ uid }, jwtSecret, {
       expiresIn: '24h',
     });
 
-    const userRecord = await User.findOne({
-      phoneNumber: formattedPhone,
-    }).select('_id');
-
-    const kycRecord = userRecord
-      ? await Kyc.findOne({ userId: userRecord._id }).select('status')
-      : null;
+    const kycRecord = await Kyc.findOneAndUpdate(
+      { userId: userRecord._id },
+      { $setOnInsert: { userId: userRecord._id, status: 'pending' } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    ).select('status');
     const kycStatus = kycRecord?.status ?? 'pending';
 
     sendSuccess(res, { token, kycStatus }, 200);

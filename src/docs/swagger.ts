@@ -11,7 +11,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'https://kapitor-be.onrender.com',
+        url: 'kapitor-be-production.up.railway.app',
         description: 'Development server',
       },
     ],

@@ -34,6 +34,7 @@ export async function submitKyc(
       adhaarCard: adhaarCard ?? null,
       drivingLicense: drivingLicense ?? null,
       panCard: panCard ?? null,
+      status: 'in_review',
     });
 
     sendSuccess(

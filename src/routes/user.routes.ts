@@ -44,6 +44,9 @@ const router = Router();
  *                 type: string
  *               country:
  *                 type: string
+ *               phoneNumber:
+ *                type: string
+ *                 example: "+919876543210"
  *     responses:
  *       201:
  *         description: User created
@@ -92,6 +95,7 @@ router.post('/', createUser);
  *                   country: "India"
  *                   walletAddress: "0x..."
  *                   role: "user"
+ *                   kycStatus: "pending"
  *       401:
  *         description: Missing or invalid token
  *       404:
