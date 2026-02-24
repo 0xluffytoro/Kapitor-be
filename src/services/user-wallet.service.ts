@@ -5,13 +5,23 @@ export async function transferFromUserWallet(params: {
   recipientAddress: string;
   amount: number | string;
   externalServerKeyShares: unknown;
+  isUSDT?: boolean;
 }): Promise<{ txHash: string }> {
-  const { accountAddress, recipientAddress, amount, externalServerKeyShares } =
-    params;
+  const {
+    accountAddress,
+    recipientAddress,
+    amount,
+    externalServerKeyShares,
+    isUSDT,
+  } = params;
 
   const rpcUrl = process.env.ETH_RPC_URL;
-  const tokenAddress = process.env.KPT_TOKEN_ADDRESS;
-  const decimalsEnv = process.env.KPT_TOKEN_DECIMALS;
+  const tokenAddress = isUSDT
+    ? process.env.USDT_ADDRESS
+    : process.env.KPT_TOKEN_ADDRESS;
+  const decimalsEnv = isUSDT
+    ? process.env.USDT_DECIMALS
+    : process.env.KPT_TOKEN_DECIMALS;
   const password = process.env.WALLET_PASSWORD;
   const environmentId = process.env.DYNAMIC_ENVIRONMENT_ID;
 
@@ -19,7 +29,11 @@ export async function transferFromUserWallet(params: {
     throw new Error('ETH_RPC_URL is not configured');
   }
   if (!tokenAddress) {
-    throw new Error('KPT_TOKEN_ADDRESS is not configured');
+    throw new Error(
+      isUSDT
+        ? 'USDT_ADDRESS is not configured'
+        : 'KPT_TOKEN_ADDRESS is not configured'
+    );
   }
   if (!environmentId) {
     throw new Error('DYNAMIC_ENVIRONMENT_ID is not configured');
@@ -28,9 +42,13 @@ export async function transferFromUserWallet(params: {
     throw new Error('WALLET_PASSWORD is not configured');
   }
 
-  const decimals = decimalsEnv ? Number(decimalsEnv) : 18;
+  const decimals = decimalsEnv ? Number(decimalsEnv) : 6;
   if (!Number.isInteger(decimals) || decimals < 0) {
-    throw new Error('KPT_TOKEN_DECIMALS must be a non-negative integer');
+    throw new Error(
+      isUSDT
+        ? 'USDT_DECIMALS must be a non-negative integer'
+        : 'KPT_TOKEN_DECIMALS must be a non-negative integer'
+    );
   }
 
   const { DynamicEvmWalletClient } =

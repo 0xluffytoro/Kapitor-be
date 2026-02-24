@@ -59,6 +59,7 @@ export async function invest(
       recipientAddress: pool.walletAddress,
       amount: parsedAmount,
       externalServerKeyShares: user.externalServerKeyShares,
+      isUSDT: true,
     });
 
     const tx = await Transaction.create({
