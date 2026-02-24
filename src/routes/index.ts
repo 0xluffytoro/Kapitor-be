@@ -4,6 +4,8 @@ import userRoutes from './user.routes';
 import kycRoutes from './kyc.routes';
 import businessUserRoutes from './business-user.routes';
 import paymentRoutes from './payment.routes';
+import investRoutes from './invest.routes';
+import poolsRoutes from './pools.routes';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -47,5 +49,7 @@ router.use('/user', authenticate, userRoutes);
 router.use('/kyc', authenticate, kycRoutes);
 router.use('/business-user', authenticate, businessUserRoutes);
 router.use('/payment', authenticate, paymentRoutes);
+router.use('/invest', authenticate, investRoutes);
+router.use('/pools', poolsRoutes);
 
 export default router;

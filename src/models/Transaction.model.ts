@@ -11,7 +11,7 @@ export interface ITransaction extends Document {
   inrAmount?: number;
   usdcAmount?: number;
   tokenAmount?: number;
-  source: 'payment-success' | 'user-transaction';
+  source: 'payment-success' | 'user-transaction' | 'investment';
 }
 
 /* =============================
@@ -51,7 +51,7 @@ const transactionSchema = new Schema<ITransaction>(
     },
     source: {
       type: String,
-      enum: ['payment-success', 'user-transaction'],
+      enum: ['payment-success', 'user-transaction', 'investment'],
       required: true,
       default: 'payment-success',
     },
