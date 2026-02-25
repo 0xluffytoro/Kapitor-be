@@ -58,7 +58,6 @@ export async function invest(
       accountAddress: user.walletAddress,
       recipientAddress: pool.walletAddress,
       amount: parsedAmount,
-      externalServerKeyShares: user.externalServerKeyShares,
       isUSDT: true,
     });
 

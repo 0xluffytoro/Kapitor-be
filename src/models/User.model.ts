@@ -14,7 +14,7 @@ export interface IUser extends Document {
   state: string;
   zipCode: string;
   country: string;
-  walletAddress: string;
+  walletAddress?: string;
   walletId?: string;
   externalServerKeyShares?: unknown;
   role: 'user' | 'admin';
@@ -67,8 +67,7 @@ const userSchema = new Schema<IUser>(
 
     walletAddress: {
       type: String,
-      unique: true,
-      index: true,
+      default: undefined,
     },
     walletId: {
       type: String,
@@ -87,6 +86,15 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true, // adds createdAt, updatedAt
     versionKey: false,
+  }
+);
+
+// Only enforce uniqueness when walletAddress is a non-null string
+userSchema.index(
+  { walletAddress: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { walletAddress: { $type: 'string' } },
   }
 );
 

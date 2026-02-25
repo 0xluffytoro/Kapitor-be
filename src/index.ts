@@ -41,9 +41,9 @@ const startServer = async () => {
     console.log('✅ Database connected successfully');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`🚀 Server is running on ${process.env.END_POINT}`);
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`📚 Swagger Docs: http://localhost:${PORT}/docs`);
+      console.log(`📚 Swagger Docs: ${process.env.END_POINT}/docs`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

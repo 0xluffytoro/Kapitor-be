@@ -83,6 +83,7 @@ const options: swaggerJsdoc.Options = {
       { name: 'KYC', description: 'KYC submission endpoints' },
       { name: 'BusinessUser', description: 'Business user endpoints' },
       { name: 'Payment', description: 'Payment processing endpoints' },
+      { name: 'Investment', description: 'Investment endpoints' },
     ],
   },
   apis: [
@@ -95,6 +96,7 @@ const options: swaggerJsdoc.Options = {
       `../routes/business-user.routes${path.extname(__filename)}`
     ),
     path.join(__dirname, `../routes/payment.routes${path.extname(__filename)}`),
+    path.join(__dirname, `../routes/invest.routes${path.extname(__filename)}`),
   ],
 };
 

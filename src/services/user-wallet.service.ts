@@ -1,19 +1,13 @@
+import { arbitrumSepolia } from 'viem/chains';
 import ERC20_ABI from '../utils/ERC20ABI';
 
 export async function transferFromUserWallet(params: {
   accountAddress: string;
   recipientAddress: string;
   amount: number | string;
-  externalServerKeyShares: unknown;
   isUSDT?: boolean;
 }): Promise<{ txHash: string }> {
-  const {
-    accountAddress,
-    recipientAddress,
-    amount,
-    externalServerKeyShares,
-    isUSDT,
-  } = params;
+  const { accountAddress, recipientAddress, amount, isUSDT } = params;
 
   const rpcUrl = process.env.ETH_RPC_URL;
   const tokenAddress = isUSDT
@@ -60,10 +54,10 @@ export async function transferFromUserWallet(params: {
     enableMPCAccelerator: false,
   });
 
-  const walletClient = await client.getWalletClient({
-    accountAddress,
-    password,
-    externalServerKeyShares: externalServerKeyShares as any,
+  await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
+
+  const walletClient = client.createViemPublicClient({
+    chain: arbitrumSepolia,
     rpcUrl,
   });
 
@@ -74,11 +68,21 @@ export async function transferFromUserWallet(params: {
     args: [recipientAddress, parseUnits(String(amount), decimals)],
   });
 
-  const txHash = await walletClient.sendTransaction({
-    account: accountAddress as `0x${string}`,
+  const tx = await walletClient.prepareTransactionRequest({
     to: tokenAddress as `0x${string}`,
     data,
-    value: 0n,
+    chain: arbitrumSepolia,
+    account: accountAddress as `0x${string}`,
+  });
+
+  const signedTx = await client.signTransaction({
+    senderAddress: accountAddress,
+    transaction: tx as any,
+    password,
+  });
+
+  const txHash = await walletClient.sendRawTransaction({
+    serializedTransaction: signedTx as `0x${string}`,
   });
 
   return { txHash };
