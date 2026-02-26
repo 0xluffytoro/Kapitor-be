@@ -130,9 +130,10 @@ export async function verifyOTP(
     let uid = '';
     let kycStatus = 'pending';
     let userType: 'user' | 'business-user' = 'user';
-    let isUserCreated = true;
+    let isUserCreated = false;
 
     if (businessUserRecord) {
+      isUserCreated = true;
       uid = businessUserRecord._id.toString();
       userType = 'business-user';
     } else {
@@ -142,11 +143,12 @@ export async function verifyOTP(
       }).select('_id');
 
       if (!userRecord) {
-        isUserCreated = false;
         userRecord = await User.create({
           phoneNumber: formattedPhone,
           role: 'user',
         });
+      } else {
+        isUserCreated = true;
       }
 
       uid = userRecord._id.toString();
