@@ -29,19 +29,21 @@ export async function submitKyc(
       return;
     }
 
-    await Kyc.create({
-      userId: uid,
-      adhaarCard: adhaarCard ?? null,
-      drivingLicense: drivingLicense ?? null,
-      panCard: panCard ?? null,
-      status: 'in_review',
-    });
-
-    sendSuccess(
-      res,
-      { message: 'Document submitted successfully, KYC under process' },
-      200
+    const kyc = await Kyc.findOneAndUpdate(
+      { userId: uid },
+      {
+        $set: {
+          userId: uid,
+          adhaarCard: adhaarCard ?? null,
+          drivingLicense: drivingLicense ?? null,
+          panCard: panCard ?? null,
+          status: 'in_review',
+        },
+      },
+      { upsert: true }
     );
+
+    sendSuccess(res, kyc, 200);
   } catch (error) {
     next(error);
   }
