@@ -3,7 +3,8 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import { connectDatabase } from './config/database';
 import { corsOptions } from './middleware/cors';
-import { errorHandler } from './middleware/errorHandler';
+import errorHandler from './middleware/errorHandler';
+import requestLogger from './middleware/requestLogger';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/swagger';
 import routes from './routes';
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 // Swagger Docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

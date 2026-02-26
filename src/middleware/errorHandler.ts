@@ -1,22 +1,34 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../services/logger.service.js';
 
-export interface AppError extends Error {
-  statusCode?: number;
-  isOperational?: boolean;
+export class AppError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number = 500
+  ) {
+    super(message);
+    this.name = 'AppError';
+    Error.captureStackTrace(this, this.constructor);
+  }
 }
 
-export const errorHandler = (
-  err: AppError,
-  _req: Request,
+const errorHandler = (
+  err: AppError | Error,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const statusCode = err instanceof AppError ? err.statusCode : 500;
+
+  logger.error(`[${req.method}] ${req.originalUrl} - ${err.message}`, {
+    stack: err.stack,
+  });
 
   res.status(statusCode).json({
     success: false,
-    message,
+    message: err.message || 'Internal Server Error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };
+
+export default errorHandler;
