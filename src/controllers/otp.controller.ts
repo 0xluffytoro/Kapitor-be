@@ -148,7 +148,7 @@ export async function verifyOTP(
           role: 'user',
         });
       } else {
-        isUserCreated = true;
+        if (userRecord.walletAddress) isUserCreated = true;
       }
 
       uid = userRecord._id.toString();
