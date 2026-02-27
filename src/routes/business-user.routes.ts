@@ -4,6 +4,7 @@ import { documentsDir } from '../config/storage';
 import {
   createBusinessUser,
   getBusinessUser,
+  updateBusinessUserRiskProfile,
 } from '../controllers/business-user.controller';
 
 const router = Router();
@@ -102,6 +103,48 @@ router.post(
   ]),
   createBusinessUser
 );
+
+/**
+ * @openapi
+ * /business-user/risk-profile:
+ *   post:
+ *     summary: Update business user risk profile
+ *     description: Updates the risk profile fields for the logged in business user
+ *     tags:
+ *       - BusinessUser
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               investmentExperienceLevel:
+ *                 type: string
+ *                 enum: [Beginner, intermediate, expert]
+ *               riskAppetite:
+ *                 type: string
+ *                 enum: [Low, Medium, High]
+ *               purpose:
+ *                 type: string
+ *                 enum: [Investments, trading, payments]
+ *               usage:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Risk profile updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid Authorization header
+ *       404:
+ *         description: Business user not found
+ */
+router.post('/risk-profile', updateBusinessUserRiskProfile);
 
 /**
  * @openapi

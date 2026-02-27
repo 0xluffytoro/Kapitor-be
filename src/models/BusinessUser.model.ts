@@ -11,6 +11,11 @@ export interface IBusinessUser extends Document {
   phoneNumber: string;
   certificateOfIncorporation?: string;
   addressProof?: string;
+  kybStatus?: 'pending' | 'verified' | 'rejected' | 'in_review';
+  investmentExperienceLevel?: 'Beginner' | 'intermediate' | 'expert';
+  riskAppetite?: 'Low' | 'Medium' | 'High';
+  purpose?: 'Investments' | 'trading' | 'payments';
+  usage?: number;
 }
 
 const businessUserSchema = new Schema<IBusinessUser>(
@@ -55,6 +60,31 @@ const businessUserSchema = new Schema<IBusinessUser>(
     },
     addressProof: {
       type: String,
+    },
+    kybStatus: {
+      type: String,
+      enum: ['pending', 'verified', 'rejected', 'in_review'],
+      default: 'pending',
+      required: false,
+    },
+    investmentExperienceLevel: {
+      type: String,
+      enum: ['beginner', 'intermediate', 'expert'],
+      required: false,
+    },
+    riskAppetite: {
+      type: String,
+      enum: ['low', 'medium', 'high'],
+      required: false,
+    },
+    purpose: {
+      type: String,
+      enum: ['investments', 'trading', 'payments'],
+      required: false,
+    },
+    usage: {
+      type: Number,
+      required: false,
     },
   },
   {

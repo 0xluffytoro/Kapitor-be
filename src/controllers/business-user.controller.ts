@@ -106,6 +106,7 @@ export async function createBusinessUser(
         phoneNumber: businessUser.phoneNumber,
         certificateOfIncorporation: businessUser.certificateOfIncorporation,
         addressProof: businessUser.addressProof,
+        kyb: businessUser.kybStatus,
       },
       201
     );
@@ -152,6 +153,62 @@ export async function getBusinessUser(
         phoneNumber: businessUser.phoneNumber,
         certificateOfIncorporation: businessUser.certificateOfIncorporation,
         addressProof: businessUser.addressProof,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Update business user risk profile
+ * POST /business-user/risk-profile
+ */
+export async function updateBusinessUserRiskProfile(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid;
+    if (!uid) {
+      sendError(res, 'Unauthorized', 401);
+      return;
+    }
+
+    const { investmentExperienceLevel, riskAppetite, purpose, usage } =
+      req.body as {
+        investmentExperienceLevel?: string;
+        riskAppetite?: string;
+        purpose?: string;
+        usage?: number;
+      };
+
+    const businessUser = await BusinessUser.findByIdAndUpdate(
+      uid,
+      {
+        investmentExperienceLevel,
+        riskAppetite,
+        purpose,
+        usage,
+      },
+      { new: true }
+    );
+
+    if (!businessUser) {
+      sendError(res, 'Business user not found', 404);
+      return;
+    }
+
+    sendSuccess(
+      res,
+      {
+        id: businessUser._id,
+        investmentExperienceLevel: businessUser.investmentExperienceLevel,
+        riskAppetite: businessUser.riskAppetite,
+        purpose: businessUser.purpose,
+        usage: businessUser.usage,
       },
       200
     );
