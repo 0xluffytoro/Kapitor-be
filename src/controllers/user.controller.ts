@@ -122,14 +122,14 @@ export async function createUser(
 
     if (!currentUser?.walletAddress) {
       const { DynamicEvmWalletClient } =
-        await import('@dynamic-labs-wallet/node-evm/index.esm.js');
+        await import('@dynamic-labs-wallet/node-evm');
       const client = new DynamicEvmWalletClient({
         environmentId: process.env.DYNAMIC_ENVIRONMENT_ID ?? '',
         enableMPCAccelerator: false,
       });
 
       const { ThresholdSignatureScheme } =
-        await import('@dynamic-labs-wallet/node/index.esm.js');
+        await import('@dynamic-labs-wallet/node');
 
       await client.authenticateApiToken(process.env.DYNAMIC_API_TOKEN ?? '');
 

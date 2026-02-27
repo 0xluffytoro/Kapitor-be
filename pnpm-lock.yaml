@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@dynamic-labs-wallet/node':
-        specifier: ^0.0.268
-        version: 0.0.268
+        specifier: 0.0.189
+        version: 0.0.189
       '@dynamic-labs-wallet/node-evm':
-        specifier: ^0.0.268
-        version: 0.0.268(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
+        specifier: 0.0.0189
+        version: 0.0.189(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
       cors:
         specifier: ^2.8.5
         version: 2.8.6
@@ -139,65 +139,56 @@ packages:
   '@dabh/diagnostics@2.0.8':
     resolution: {integrity: sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q==}
 
-  '@dynamic-labs-sdk/assert-package-version@0.3.0':
-    resolution: {integrity: sha512-RzBE/6OvFyZrsPK3mOysD2kVygeVwOSZT8vOmprBWculf/HL0urFWU2xtti/VBbnM7UceppOR7JpzgYrgU14FA==}
+  '@dynamic-labs-sdk/assert-package-version@0.1.2':
+    resolution: {integrity: sha512-riWzoNe0NoS0nSWX3pqQ0Tjt3OAIufI0LpuVR0SQwGA1Xr8BsZZs+RKb+cxDMtpyKE+ZaA+U3GEN+UXr2FYm/A==}
 
-  '@dynamic-labs-sdk/client@0.3.0':
-    resolution: {integrity: sha512-niOsqe4GG3AChghIFvNmdyAa5OtWC+YLFMUw39fP7UOkp3qGclr/oKDSBxcRxs3CyEP+HZdfAvizx2AYqs5PTg==}
+  '@dynamic-labs-sdk/client@0.1.2':
+    resolution: {integrity: sha512-2GYWnVGwtD1xfpQunUvmISDlrsAnY7e9rjvebvuAtMy9st9PhZxomLxd0kj9v2sX4R+mxtD0vKuXMS0+p+tJ/Q==}
 
-  '@dynamic-labs-sdk/evm@0.3.0':
-    resolution: {integrity: sha512-YeVpw2ypktHmiNcR010K4HP4Ma+VLjsR7JvbyZt25/GFYU5Qzo0VXSgpZVwk5bn7PrIGtxlahVFw1Jl/L45ABw==}
+  '@dynamic-labs-sdk/evm@0.1.2':
+    resolution: {integrity: sha512-b7v0hZXaLmpWV6fI0+2HcdMPRMVn9VXK2Ji/sB+1A4+ssg/lYLz0X7FSpZYIXTtkIPYMaynbV40hJ5fFgBc2XA==}
     peerDependencies:
       viem: ^2.28.4
 
-  '@dynamic-labs-sdk/wallet-connect@0.3.0':
-    resolution: {integrity: sha512-QDFrZ/5LbDw3Z84sVtRUdjqROTvvhCPJsnthWjGzsdZoO0jrIetRVZcfD7pUwRX39Fq5fXpC4maL6yTilej5PQ==}
+  '@dynamic-labs-sdk/wallet-connect@0.1.2':
+    resolution: {integrity: sha512-u/UD+DdnnYmVn8ZC1ONZ4TKbRM9WdUDMvKIIb37wkXddsK2AHXydsK09chC0O3SghRhLPjf51k4rlT6hpn+o8A==}
 
-  '@dynamic-labs-sdk/zerodev@0.3.0':
-    resolution: {integrity: sha512-2zWvwpf+I7ncDTvMvfbOMbsNcqMYJGQWkX5VEsfuU9setCxLfahlGr7conWds8WxhllRbnMer8DLM8aXiNP/vg==}
+  '@dynamic-labs-sdk/zerodev@0.1.2':
+    resolution: {integrity: sha512-3N/OPpFe5f1EmqM4ObkrZmb5mZvIQMNgxm/beJzIEiCQdqJjd58litCuY8YRX1NTApJHALMJzhJuT4gyIGGHyw==}
     peerDependencies:
       viem: ^2.28.4
 
-  '@dynamic-labs-wallet/browser-wallet-client@0.0.250':
-    resolution: {integrity: sha512-TJroeuP7KrLTgBN1Kc1ptD1hdGqawGBrNnyijZPJbAEocbMZIZhba7Yp/P8zg2h5CuPOvMcj1LPiAh3UPfJULQ==}
+  '@dynamic-labs-wallet/browser-wallet-client@0.0.211':
+    resolution: {integrity: sha512-ZYtpKlisiDejEiD2oFIpcpkjFM0UMLTuRZ0gzEe+ybBn4e3g+Yt0XjKdcAPHvQVeIb94TgtZqLmxRW/lQz9hSQ==}
 
   '@dynamic-labs-wallet/browser@0.0.167':
     resolution: {integrity: sha512-HDmUetnJ1iz6kGd5PB1kJzeLI7ZJmwxlJ1QGtUqSQHDdBkhLwaDPlccB2IviC5iPfU5PR/IQ1BYEqpoTWx2sBA==}
 
-  '@dynamic-labs-wallet/browser@0.0.203':
-    resolution: {integrity: sha512-Vwi4CFMjSiLsPF4VUlYV4F87xaQrgnmUVUVx3b5F0I5DbFsGLafiSl2T/dlsOeNuRAhbpDMU4MEB4oOxzR0kYQ==}
-
   '@dynamic-labs-wallet/core@0.0.167':
     resolution: {integrity: sha512-jEHD/mDfnqx2/ML/MezY725uPPrKGsGoR3BaS1JNITGIitai1gPEgaEMqbXIhzId/m+Xieb8ZrLDiaYYJcXcyQ==}
 
-  '@dynamic-labs-wallet/core@0.0.203':
-    resolution: {integrity: sha512-1ykOANTDCPPaIpajpKqRxfISGYrmiMs7WMZQzdzRkTLftpnatgycYjdZrX9adhE1kY9BMrPdhfYaaE5B9wbFbQ==}
+  '@dynamic-labs-wallet/core@0.0.189':
+    resolution: {integrity: sha512-7RDqQuBeReKFf7Hf8CW83t1vk4WSw8/lEVzrTvtx8ZvFvgMZcv3XiUEPUEzYmJ9TT6yVnko1o5x2AFUyNYHO9A==}
 
-  '@dynamic-labs-wallet/core@0.0.250':
-    resolution: {integrity: sha512-0gKs/DI82kdM/V0EViCM1pJ/LzVjNjpFiC6HX3nO+HfJLlanaBuRPIAZPjfTErJm3Ohj4rr4G7H39qsI7gb9QQ==}
+  '@dynamic-labs-wallet/core@0.0.211':
+    resolution: {integrity: sha512-PPLjOu55O4G204phWfPmpZNn4p+vcinZ8XvBvBcRl+uHhYxYIFg/Ma4C96ZrNB08iT5uxXxzNAWAg46ytO/GGA==}
 
-  '@dynamic-labs-wallet/core@0.0.268':
-    resolution: {integrity: sha512-08HjS/8mm7xdpAxZieS6yagl72BhKZp/ownAXZMpQoVWjdVfksFjFJ+CM8SabSFNbOkqvgmXTwqlp8djv+wOgw==}
+  '@dynamic-labs-wallet/forward-mpc-client@0.1.2':
+    resolution: {integrity: sha512-xUB5RPUsy0yyQc9yM2DabbCfyckQjbJbF3voe/6Bgnx4d3xJzVBNHCQBtE6JH/o5kuBsxCYDk9BJXeOpvoHEHA==}
 
   '@dynamic-labs-wallet/forward-mpc-client@0.1.3':
     resolution: {integrity: sha512-riZesfU41fMvetaxJ3bO48/9P8ikRPgoVJgWh8m8i0oRyYN7uUz+Iesp+52U12DCtcvSTXljxrKtrV3yqNAYRw==}
 
-  '@dynamic-labs-wallet/forward-mpc-client@0.2.0':
-    resolution: {integrity: sha512-zkn5eYPPkjOFRi8POHXM+rl2lW+0AKjqiKPdNYmJieegI8PuXqq9Q0UzVWISwzpqmMX4/nQmK+9cqbPDW9Lu6A==}
-
   '@dynamic-labs-wallet/forward-mpc-shared@0.1.0':
     resolution: {integrity: sha512-xRpMri4+ZuClonwf04RcnT/BCG8oA36ononD7s0MA5wSqd8kOuHjzNTSoM6lWnPiCmlpECyPARJ1CEO02Sfq9Q==}
 
-  '@dynamic-labs-wallet/forward-mpc-shared@0.2.0':
-    resolution: {integrity: sha512-2I8NoCBVT9/09o4+M78S2wyY9jVXAb6RKt5Bnh1fhvikuB11NBeswtfZLns3wAFQxayApe31Jhamd4D2GR+mtw==}
-
-  '@dynamic-labs-wallet/node-evm@0.0.268':
-    resolution: {integrity: sha512-QtLom/1hBu1LnILhaVB1CwvUc7kUzSFmbGAOg/T160dvpmPiaza7EkX0ZccXw5isUJQrj+zdxKFEtgOnH9GxvA==}
+  '@dynamic-labs-wallet/node-evm@0.0.189':
+    resolution: {integrity: sha512-ymCsMhK8caHrBtghkBIUhec8DgmjRecSLBNebPvvg5Q72R5DlY0Ica5Ovlg4pGG51wFx5KzDKQE54JxnjW48mQ==}
     peerDependencies:
       viem: 2.38.2
 
-  '@dynamic-labs-wallet/node@0.0.268':
-    resolution: {integrity: sha512-d+mzEEuVgkFhwbHb8B66heqxWZOSia23m5GwV6WV2zW7oMsQgV3HjCDbiwXjGyOgRN8yqhz6VLU/EYutjqAbig==}
+  '@dynamic-labs-wallet/node@0.0.189':
+    resolution: {integrity: sha512-+eDqdECT2msLfej6kNIyh67HCi35kNb/SuEqd/bb6YLE6CYDlmhbL9KqWvFoNFj9+dQYFLGCuPjRamUPJX3oVg==}
 
   '@dynamic-labs/assert-package-version@4.61.4':
     resolution: {integrity: sha512-86muXER+0tVgA3rHSCgSpJg7qqx4jjl+Ge3vO/NkAPLfMqOPdBQFMeLyTxeNINiR/Aovk3txZulCaJ9ZswERwQ==}
@@ -211,14 +202,17 @@ packages:
   '@dynamic-labs/sdk-api-core@0.0.764':
     resolution: {integrity: sha512-79JptJTTClLc9qhioThtwMuzTHJ+mrj8sTEglb7Mcx3lJub9YbXqNdzS9mLRxZsr2et3aqqpzymXdUBzSEaMng==}
 
+  '@dynamic-labs/sdk-api-core@0.0.801':
+    resolution: {integrity: sha512-kiPz/xL9zim7C9eCtU2rjsgFyaYvqURRfP2V0PHKlPIHvP03e5zEpdmGxcBBPTLUv38cMvE13TLn3M9eYKbcXA==}
+
+  '@dynamic-labs/sdk-api-core@0.0.813':
+    resolution: {integrity: sha512-z2xkdw6zU6nj+F+diF4QFro7GZcF9wSfuBTU3rEI17pJCNuyv2Sx+fKOXjKlCUKr/rpczXVuMCO4bTycPZf9cQ==}
+
   '@dynamic-labs/sdk-api-core@0.0.818':
     resolution: {integrity: sha512-s0iq+kS15gbBk7HtFEVkuzHHUc8Xt0afA1el31+c8HBLIV0Bz1O4WaMTKdpvC/Rb5RS5GDCOmxeR6LvDzZBw+A==}
 
-  '@dynamic-labs/sdk-api-core@0.0.828':
-    resolution: {integrity: sha512-tLUbH3Koo6OgtWGoklao4KHuerUIKKazRSAMet9xde933HaA+0qXWopld4uvVJCB6hVb4GHo5CdbpSRXSBgGCw==}
-
-  '@dynamic-labs/sdk-api-core@0.0.860':
-    resolution: {integrity: sha512-zJQU5AvyvBWwhUq0K2tOKCTR5rSt8PWYaem+edGRV+InyWT0OuKn6jUJttpFgSqOg3XHlCqUFwLmff76OmhCfw==}
+  '@dynamic-labs/sdk-api-core@0.0.843':
+    resolution: {integrity: sha512-+4tcNWsKuPzt+suJax3jprwyI+w2gbEbSkzeuvI9/x1B9AuFPvIMxILoVqK9hEsrT57APQHnmTOkxSNk7aDgPA==}
 
   '@dynamic-labs/sdk-api-core@0.0.864':
     resolution: {integrity: sha512-XChDKxbbJtZgFsJ1g9N35ALE2O/CCmT+tB50LpbnbXWkt1gRjYoPNB+UVzNQeDXD4skwJUy6i849WmTUPRNReg==}
@@ -905,6 +899,9 @@ packages:
   atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
+
+  axios@1.12.2:
+    resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
@@ -2728,13 +2725,13 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@dynamic-labs-sdk/assert-package-version@0.3.0': {}
+  '@dynamic-labs-sdk/assert-package-version@0.1.2': {}
 
-  '@dynamic-labs-sdk/client@0.3.0':
+  '@dynamic-labs-sdk/client@0.1.2':
     dependencies:
-      '@dynamic-labs-sdk/assert-package-version': 0.3.0
-      '@dynamic-labs-wallet/browser-wallet-client': 0.0.250
-      '@dynamic-labs/sdk-api-core': 0.0.860
+      '@dynamic-labs-sdk/assert-package-version': 0.1.2
+      '@dynamic-labs-wallet/browser-wallet-client': 0.0.211
+      '@dynamic-labs/sdk-api-core': 0.0.843
       '@simplewebauthn/browser': 13.1.0
       buffer: 6.0.3
       eventemitter3: 5.0.1
@@ -2744,12 +2741,12 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@dynamic-labs-sdk/evm@0.3.0(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
+  '@dynamic-labs-sdk/evm@0.1.2(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
     dependencies:
-      '@dynamic-labs-sdk/assert-package-version': 0.3.0
-      '@dynamic-labs-sdk/client': 0.3.0
-      '@dynamic-labs-sdk/wallet-connect': 0.3.0(typescript@5.9.3)
-      '@dynamic-labs/sdk-api-core': 0.0.860
+      '@dynamic-labs-sdk/assert-package-version': 0.1.2
+      '@dynamic-labs-sdk/client': 0.1.2
+      '@dynamic-labs-sdk/wallet-connect': 0.1.2(typescript@5.9.3)
+      '@dynamic-labs/sdk-api-core': 0.0.843
       '@walletconnect/types': 2.21.8
       '@walletconnect/utils': 2.21.8(typescript@5.9.3)(zod@3.25.76)
       viem: 2.46.2(typescript@5.9.3)(zod@3.25.76)
@@ -2779,11 +2776,11 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@dynamic-labs-sdk/wallet-connect@0.3.0(typescript@5.9.3)':
+  '@dynamic-labs-sdk/wallet-connect@0.1.2(typescript@5.9.3)':
     dependencies:
-      '@dynamic-labs-sdk/assert-package-version': 0.3.0
-      '@dynamic-labs-sdk/client': 0.3.0
-      '@dynamic-labs/sdk-api-core': 0.0.860
+      '@dynamic-labs-sdk/assert-package-version': 0.1.2
+      '@dynamic-labs-sdk/client': 0.1.2
+      '@dynamic-labs/sdk-api-core': 0.0.843
       '@walletconnect/sign-client': 2.21.8(typescript@5.9.3)(zod@4.0.5)
       '@walletconnect/types': 2.21.8
       '@walletconnect/utils': 2.21.8(typescript@5.9.3)(zod@4.0.5)
@@ -2813,12 +2810,12 @@ snapshots:
       - uploadthing
       - utf-8-validate
 
-  '@dynamic-labs-sdk/zerodev@0.3.0(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
+  '@dynamic-labs-sdk/zerodev@0.1.2(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
     dependencies:
-      '@dynamic-labs-sdk/assert-package-version': 0.3.0
-      '@dynamic-labs-sdk/client': 0.3.0
-      '@dynamic-labs-sdk/evm': 0.3.0(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
-      '@dynamic-labs/sdk-api-core': 0.0.860
+      '@dynamic-labs-sdk/assert-package-version': 0.1.2
+      '@dynamic-labs-sdk/client': 0.1.2
+      '@dynamic-labs-sdk/evm': 0.1.2(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
+      '@dynamic-labs/sdk-api-core': 0.0.843
       '@zerodev/ecdsa-validator': 5.4.9(@zerodev/sdk@5.4.36(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))
       '@zerodev/multi-chain-ecdsa-validator': 5.4.5(@zerodev/sdk@5.4.36(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))
       '@zerodev/sdk': 5.4.36(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))
@@ -2850,9 +2847,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@dynamic-labs-wallet/browser-wallet-client@0.0.250':
+  '@dynamic-labs-wallet/browser-wallet-client@0.0.211':
     dependencies:
-      '@dynamic-labs-wallet/core': 0.0.250
+      '@dynamic-labs-wallet/core': 0.0.211
       '@dynamic-labs/logger': 4.61.4
       '@dynamic-labs/message-transport': 4.61.4
       uuid: 11.1.0
@@ -2875,22 +2872,6 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@dynamic-labs-wallet/browser@0.0.203':
-    dependencies:
-      '@dynamic-labs-wallet/core': 0.0.203
-      '@dynamic-labs/logger': 4.61.4
-      '@dynamic-labs/sdk-api-core': 0.0.818
-      '@noble/hashes': 1.7.1
-      argon2id: 1.0.1
-      axios: 1.13.2
-      http-errors: 2.0.0
-      semver: 7.7.4
-      uuid: 11.1.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
-
   '@dynamic-labs-wallet/core@0.0.167':
     dependencies:
       '@dynamic-labs/sdk-api-core': 0.0.764
@@ -2899,7 +2880,18 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@dynamic-labs-wallet/core@0.0.203':
+  '@dynamic-labs-wallet/core@0.0.189':
+    dependencies:
+      '@dynamic-labs-wallet/forward-mpc-client': 0.1.2
+      '@dynamic-labs/sdk-api-core': 0.0.813
+      axios: 1.12.2
+      uuid: 11.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@dynamic-labs-wallet/core@0.0.211':
     dependencies:
       '@dynamic-labs-wallet/forward-mpc-client': 0.1.3
       '@dynamic-labs/logger': 4.61.4
@@ -2912,33 +2904,7 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@dynamic-labs-wallet/core@0.0.250':
-    dependencies:
-      '@dynamic-labs-wallet/forward-mpc-client': 0.2.0
-      '@dynamic-labs/logger': 4.61.4
-      '@dynamic-labs/sdk-api-core': 0.0.828
-      axios: 1.13.2
-      http-errors: 2.0.0
-      uuid: 11.1.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
-
-  '@dynamic-labs-wallet/core@0.0.268':
-    dependencies:
-      '@dynamic-labs-wallet/forward-mpc-client': 0.2.0
-      '@dynamic-labs/logger': 4.61.4
-      '@dynamic-labs/sdk-api-core': 0.0.864
-      axios: 1.13.5
-      http-errors: 2.0.0
-      uuid: 11.1.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
-
-  '@dynamic-labs-wallet/forward-mpc-client@0.1.3':
+  '@dynamic-labs-wallet/forward-mpc-client@0.1.2':
     dependencies:
       '@dynamic-labs-wallet/core': 0.0.167
       '@dynamic-labs-wallet/forward-mpc-shared': 0.1.0
@@ -2953,10 +2919,10 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@dynamic-labs-wallet/forward-mpc-client@0.2.0':
+  '@dynamic-labs-wallet/forward-mpc-client@0.1.3':
     dependencies:
-      '@dynamic-labs-wallet/core': 0.0.203
-      '@dynamic-labs-wallet/forward-mpc-shared': 0.2.0
+      '@dynamic-labs-wallet/core': 0.0.167
+      '@dynamic-labs-wallet/forward-mpc-shared': 0.1.0
       '@evervault/wasm-attestation-bindings': 0.3.1
       '@noble/hashes': 2.0.1
       '@noble/post-quantum': 0.5.4
@@ -2980,32 +2946,15 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@dynamic-labs-wallet/forward-mpc-shared@0.2.0':
+  '@dynamic-labs-wallet/node-evm@0.0.189(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
     dependencies:
-      '@dynamic-labs-wallet/browser': 0.0.203
-      '@dynamic-labs-wallet/core': 0.0.203
-      '@noble/ciphers': 0.4.1
-      '@noble/hashes': 2.0.1
-      '@noble/post-quantum': 0.5.4
-      fp-ts: 2.16.11
-      io-ts: 2.2.22(fp-ts@2.16.11)
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
-
-  '@dynamic-labs-wallet/node-evm@0.0.268(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
-    dependencies:
-      '@dynamic-labs-sdk/client': 0.3.0
-      '@dynamic-labs-sdk/evm': 0.3.0(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
-      '@dynamic-labs-sdk/zerodev': 0.3.0(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
-      '@dynamic-labs-wallet/core': 0.0.268
-      '@dynamic-labs-wallet/node': 0.0.268
-      '@dynamic-labs/logger': 4.61.4
-      '@dynamic-labs/sdk-api-core': 0.0.864
+      '@dynamic-labs-sdk/client': 0.1.2
+      '@dynamic-labs-sdk/evm': 0.1.2(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
+      '@dynamic-labs-sdk/zerodev': 0.1.2(@zerodev/webauthn-key@5.5.0(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
+      '@dynamic-labs-wallet/node': 0.0.189
+      '@dynamic-labs/sdk-api-core': 0.0.801
       '@zerodev/ecdsa-validator': 5.4.9(@zerodev/sdk@5.4.36(viem@2.46.2(typescript@5.9.3)(zod@3.25.76)))(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))
       '@zerodev/sdk': 5.4.36(viem@2.46.2(typescript@5.9.3)(zod@3.25.76))
-      axios: 1.13.5
       viem: 2.46.2(typescript@5.9.3)(zod@3.25.76)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -3034,12 +2983,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@dynamic-labs-wallet/node@0.0.268':
+  '@dynamic-labs-wallet/node@0.0.189':
     dependencies:
-      '@dynamic-labs-wallet/core': 0.0.268
-      '@dynamic-labs-wallet/forward-mpc-client': 0.2.0
+      '@dynamic-labs-wallet/core': 0.0.189
+      '@dynamic-labs-wallet/forward-mpc-client': 0.1.2
       '@dynamic-labs/logger': 4.61.4
-      '@dynamic-labs/sdk-api-core': 0.0.864
+      '@dynamic-labs/sdk-api-core': 0.0.801
       '@noble/hashes': 1.7.1
       uuid: 11.1.0
     transitivePeerDependencies:
@@ -3065,11 +3014,13 @@ snapshots:
 
   '@dynamic-labs/sdk-api-core@0.0.764': {}
 
+  '@dynamic-labs/sdk-api-core@0.0.801': {}
+
+  '@dynamic-labs/sdk-api-core@0.0.813': {}
+
   '@dynamic-labs/sdk-api-core@0.0.818': {}
 
-  '@dynamic-labs/sdk-api-core@0.0.828': {}
-
-  '@dynamic-labs/sdk-api-core@0.0.860': {}
+  '@dynamic-labs/sdk-api-core@0.0.843': {}
 
   '@dynamic-labs/sdk-api-core@0.0.864': {}
 
@@ -3865,6 +3816,11 @@ snapshots:
       typescript: 5.9.3
       zod: 3.25.76
 
+  abitype@1.2.3(typescript@5.9.3)(zod@4.0.5):
+    optionalDependencies:
+      typescript: 5.9.3
+      zod: 4.0.5
+
   accepts@1.3.8:
     dependencies:
       mime-types: 2.1.35
@@ -3938,6 +3894,14 @@ snapshots:
   asynckit@0.4.0: {}
 
   atomic-sleep@1.0.0: {}
+
+  axios@1.12.2:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.5
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
 
   axios@1.13.2:
     dependencies:
@@ -5097,7 +5061,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.9.3)(zod@3.25.76)
+      abitype: 1.2.3(typescript@5.9.3)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.9.3
@@ -5112,7 +5076,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.9.3)(zod@4.0.5)
+      abitype: 1.2.3(typescript@5.9.3)(zod@4.0.5)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.9.3

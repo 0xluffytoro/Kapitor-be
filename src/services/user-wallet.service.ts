@@ -46,7 +46,7 @@ export async function transferFromUserWallet(params: {
   }
 
   const { DynamicEvmWalletClient } =
-    await import('@dynamic-labs-wallet/node-evm/index.esm.js');
+    await import('@dynamic-labs-wallet/node-evm');
   const { parseAbi, encodeFunctionData, parseUnits } = await import('viem');
 
   const client = new DynamicEvmWalletClient({
