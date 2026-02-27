@@ -7,6 +7,7 @@ import {
   getUserTransactions,
   sendTransaction,
   verifyTransaction,
+  updateUserRiskProfile,
 } from '../controllers/user.controller';
 
 const router = Router();
@@ -177,6 +178,48 @@ router.get('/transactions', getUserTransactions);
  *         description: Missing or invalid token
  */
 router.get('/recent-transactions', getRecentTransactions);
+
+/**
+ * @openapi
+ * /user/risk-profile:
+ *   post:
+ *     summary: Update user risk profile
+ *     description: Updates the risk profile fields for the logged in user
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               investmentExperienceLevel:
+ *                 type: string
+ *                 enum: [Beginner, intermediate, expert]
+ *               riskAppetite:
+ *                 type: string
+ *                 enum: [Low, Medium, High]
+ *               purpose:
+ *                 type: string
+ *                 enum: [Investments, trading, payments]
+ *               usage:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Risk profile updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ *       404:
+ *         description: User not found
+ */
+router.post('/risk-profile', updateUserRiskProfile);
 
 const transactionRouter = Router();
 

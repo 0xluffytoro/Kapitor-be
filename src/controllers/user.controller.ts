@@ -504,3 +504,60 @@ export async function getUserTransactions(
     next(error);
   }
 }
+
+/**
+ * Update user risk profile
+ * POST /user/risk-profile
+ */
+export async function updateUserRiskProfile(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const uid = req.uid as string;
+
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      sendError(res, 'Invalid user ID', 400);
+      return;
+    }
+
+    const { investmentExperienceLevel, riskAppetite, purpose, usage } =
+      req.body as {
+        investmentExperienceLevel?: string;
+        riskAppetite?: string;
+        purpose?: string;
+        usage?: number;
+      };
+
+    const user = await User.findByIdAndUpdate(
+      uid,
+      {
+        investmentExperienceLevel,
+        riskAppetite,
+        purpose,
+        usage,
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      sendError(res, 'User not found', 404);
+      return;
+    }
+
+    sendSuccess(
+      res,
+      {
+        id: user._id,
+        investmentExperienceLevel: user.investmentExperienceLevel,
+        riskAppetite: user.riskAppetite,
+        purpose: user.purpose,
+        usage: user.usage,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}

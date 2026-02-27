@@ -18,6 +18,10 @@ export interface IUser extends Document {
   walletId?: string;
   externalServerKeyShares?: unknown;
   role: 'user' | 'admin';
+  investmentExperienceLevel?: 'Beginner' | 'intermediate' | 'expert';
+  riskAppetite?: 'Low' | 'Medium' | 'High';
+  purpose?: 'Investments' | 'trading' | 'payments';
+  usage?: number;
 }
 
 /* =============================
@@ -81,6 +85,25 @@ const userSchema = new Schema<IUser>(
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
+    },
+    investmentExperienceLevel: {
+      type: String,
+      enum: ['Beginner', 'intermediate', 'expert'],
+      required: false,
+    },
+    riskAppetite: {
+      type: String,
+      enum: ['Low', 'Medium', 'High'],
+      required: false,
+    },
+    purpose: {
+      type: String,
+      enum: ['Investments', 'trading', 'payments'],
+      required: false,
+    },
+    usage: {
+      type: Number,
+      required: false,
     },
   },
   {
