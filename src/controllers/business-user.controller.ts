@@ -60,6 +60,24 @@ export async function createBusinessUser(
       backUpToClientShareService: true,
     });
 
+    const files = req.files as
+      | {
+          [fieldname: string]: Express.Multer.File[];
+        }
+      | undefined;
+
+    const certificateFile = files?.certificateOfIncorporation?.[0];
+    const addressFile = files?.addressProof?.[0];
+
+    if (!certificateFile || !addressFile) {
+      sendError(
+        res,
+        'Both certificateOfIncorporation and addressProof files are required',
+        400
+      );
+      return;
+    }
+
     const businessUser = await BusinessUser.create({
       _id: uid,
       businessName,
@@ -70,6 +88,8 @@ export async function createBusinessUser(
       ownerShipPercentage,
       walletAddress: evmWallet.accountAddress,
       phoneNumber: toE164(phoneNumber),
+      certificateOfIncorporation: `${process.env.END_POINT}/document/${certificateFile.filename}`,
+      addressProof: `${process.env.END_POINT}/document/${addressFile.filename}`,
     });
 
     sendSuccess(
@@ -84,6 +104,8 @@ export async function createBusinessUser(
         ownerShipPercentage: businessUser.ownerShipPercentage,
         walletAddress: evmWallet.accountAddress,
         phoneNumber: businessUser.phoneNumber,
+        certificateOfIncorporation: businessUser.certificateOfIncorporation,
+        addressProof: businessUser.addressProof,
       },
       201
     );
@@ -128,6 +150,8 @@ export async function getBusinessUser(
         ownerShipPercentage: businessUser.ownerShipPercentage,
         walletAddress: businessUser.walletAddress,
         phoneNumber: businessUser.phoneNumber,
+        certificateOfIncorporation: businessUser.certificateOfIncorporation,
+        addressProof: businessUser.addressProof,
       },
       200
     );

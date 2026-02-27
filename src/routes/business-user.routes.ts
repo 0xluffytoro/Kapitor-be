@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import multer from 'multer';
+import { documentsDir } from '../config/storage';
 import {
   createBusinessUser,
   getBusinessUser,
@@ -6,12 +8,36 @@ import {
 
 const router = Router();
 
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, documentsDir);
+  },
+  filename: (req, file, cb) => {
+    const uid = (req as { uid?: string }).uid ?? 'unknown';
+    cb(null, `${uid}-${file.fieldname}.pdf`);
+  },
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (_req, file, cb) => {
+    const isPdf =
+      file.mimetype === 'application/pdf' ||
+      file.mimetype === 'application/x-pdf';
+    if (!isPdf) {
+      cb(new Error('Only PDF files are allowed'));
+      return;
+    }
+    cb(null, true);
+  },
+});
+
 /**
  * @openapi
  * /business-user:
  *   post:
  *     summary: Create business user account
- *     description: Creates a business user account
+ *     description: Creates a business user account. All fields (including non-file fields) are sent as multipart/form-data.
  *     tags:
  *       - BusinessUser
  *     security:
@@ -19,7 +45,7 @@ const router = Router();
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -30,6 +56,8 @@ const router = Router();
  *               - ownerName
  *               - ownerShipPercentage
  *               - phoneNumber
+ *               - certificateOfIncorporation
+ *               - addressProof
  *             properties:
  *               businessName:
  *                 type: string
@@ -45,6 +73,17 @@ const router = Router();
  *                 type: number
  *               phoneNumber:
  *                 type: string
+ *               certificateOfIncorporation:
+ *                 type: string
+ *                 format: binary
+ *               addressProof:
+ *                 type: string
+ *                 format: binary
+ *           encoding:
+ *             certificateOfIncorporation:
+ *               contentType: application/pdf
+ *             addressProof:
+ *               contentType: application/pdf
  *     responses:
  *       201:
  *         description: Business user created
@@ -55,7 +94,14 @@ const router = Router();
  *       401:
  *         description: Missing or invalid Authorization header
  */
-router.post('/', createBusinessUser);
+router.post(
+  '/',
+  upload.fields([
+    { name: 'certificateOfIncorporation', maxCount: 1 },
+    { name: 'addressProof', maxCount: 1 },
+  ]),
+  createBusinessUser
+);
 
 /**
  * @openapi

@@ -8,6 +8,7 @@ import requestLogger from './middleware/requestLogger';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/swagger';
 import routes from './routes';
+import { documentsDir } from './config/storage';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,9 @@ app.use(requestLogger);
 
 // Swagger Docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Document Static Files
+app.use('/document', express.static(documentsDir));
 
 // Health Check Route
 app.get('/', (_, res) => {
