@@ -1,9 +1,5 @@
 import { Router } from 'express';
-import {
-  createOrder,
-  paymentSuccess,
-  verifyPayment,
-} from '../controllers/payment.controller';
+import { createOrder, verifyPayment } from '../controllers/payment.controller';
 
 const router = Router();
 
@@ -59,45 +55,6 @@ const router = Router();
  *                   type: string
  */
 router.post('/create-order', createOrder);
-
-/**
- * @openapi
- * /payment/payment-success:
- *   post:
- *     summary: Mark payment successful
- *     description: Updates an order with payment details after successful payment.
- *     tags:
- *       - Payment
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - amount
- *             properties:
- *               amount:
- *                 type: number
- *                 example: 280
- *               address:
- *                 type: string
- *                 example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
- *     responses:
- *       200:
- *         description: Order updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
- *       400:
- *         description: Missing order_id
- *       404:
- *         description: Order not found
- */
-router.post('/payment-success', paymentSuccess);
 
 /**
  * @openapi

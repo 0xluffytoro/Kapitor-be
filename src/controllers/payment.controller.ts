@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { sendError, sendSuccess } from '../utils/response';
 import Razorpay from 'razorpay';
 import { RazorpayOrders } from '../models/RazorpayOrders.model';
@@ -55,50 +55,26 @@ export async function createOrder(
   }
 }
 
-export async function paymentSuccess(
+export async function verifyPayment(
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  try {
-    const uid = req.uid;
-    if (!uid) {
-      sendError(res, 'Unauthorized', 401);
-      return;
-    }
-    const { amount, address } = req.body;
-    const usdAmount = await getInrAmountInUsdc(amount);
-    const result = await mintTo(
-      address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-      usdAmount.toString()
-    );
-    if (result?.txHash) {
-      await Transaction.create({
-        userId: uid,
-        txHash: result.txHash,
-        toAddress: address || '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-        inrAmount: Number(amount),
-        usdcAmount: Number(usdAmount),
-        source: 'payment-success',
-      });
-    }
-    sendSuccess(
-      res,
-      { message: 'Kapitor Token Payment successful', result },
-      200
-    );
-  } catch (error) {
-    next(error);
+  const uid = req.uid;
+  if (!uid) {
+    sendError(res, 'Unauthorized', 401);
+    return;
   }
-}
-
-export async function verifyPayment(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
     req.body;
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    sendError(
+      res,
+      'razorpay_order_id, razorpay_payment_id and razorpay_signature are required',
+      401
+    );
+    return;
+  }
 
   const secret = process.env.RAZORPAY_KEY_SECRET || '';
   const body = razorpay_order_id + '|' + razorpay_payment_id;
@@ -111,16 +87,33 @@ export async function verifyPayment(
     );
     if (isValidSignature) {
       // Update the order with payment details
-      const orders = await RazorpayOrders.find({});
-      const order = orders.find(o => o.order_id === razorpay_order_id);
+      const order = await RazorpayOrders.findOne({
+        _id: razorpay_order_id,
+      }).populate('userId', 'walletAddress');
       if (order) {
+        const walletAddress = (order.userId as { walletAddress?: string })
+          ?.walletAddress;
+        if (!walletAddress) {
+          sendError(res, 'Wallet address not found', 403);
+          return;
+        }
         order.status = 'paid';
         order.payment_id = razorpay_payment_id;
         await RazorpayOrders.findByIdAndUpdate(order._id, order);
+        const usdAmount = await getInrAmountInUsdc(order.amount);
+        const result = await mintTo(walletAddress, usdAmount.toString());
+        if (result?.txHash) {
+          await Transaction.create({
+            userId: uid,
+            txHash: result.txHash,
+            toAddress: walletAddress,
+            inrAmount: Number(order.amount),
+            usdcAmount: Number(usdAmount),
+            source: 'payment-success',
+          });
+        }
+        sendSuccess(res, { message: 'Payment successful', result }, 200);
       }
-      const message = 'Payment verification successful';
-      sendSuccess(res, { message }, 200);
-      console.log(message);
     } else {
       sendError(res, 'Payment verification failed', 400);
       console.log('Payment verification failed');
