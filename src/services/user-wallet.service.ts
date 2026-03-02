@@ -1,5 +1,5 @@
 import { arbitrumSepolia } from 'viem/chains';
-import ERC20_ABI from '../utils/ERC20ABI';
+import ERC20_ABI from '../utils/ERC20ABI.js';
 
 export async function transferFromUserWallet(params: {
   accountAddress: string;

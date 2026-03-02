@@ -1,14 +1,14 @@
 import 'dotenv/config';
 import express, { Express } from 'express';
 import cors from 'cors';
-import { connectDatabase } from './config/database';
-import { corsOptions } from './middleware/cors';
-import errorHandler from './middleware/errorHandler';
-import requestLogger from './middleware/requestLogger';
+import { connectDatabase } from './config/database.js';
+import { corsOptions } from './middleware/cors.js';
+import errorHandler from './middleware/errorHandler.js';
+import requestLogger from './middleware/requestLogger.js';
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './docs/swagger';
-import routes from './routes';
-import { documentsDir } from './config/storage';
+import { swaggerSpec } from './docs/swagger.js';
+import routes from './routes/index.js';
+import { documentsDir } from './config/storage.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;

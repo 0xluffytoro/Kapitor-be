@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { documentsDir } from '../config/storage';
+import { documentsDir } from '../config/storage.js';
 import {
   createBusinessUser,
   getBusinessUser,
   updateBusinessUserRiskProfile,
-} from '../controllers/business-user.controller';
+} from '../controllers/business-user.controller.js';
 
 const router = Router();
 

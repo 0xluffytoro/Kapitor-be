@@ -1,20 +1,20 @@
 import { Response, NextFunction } from 'express';
 import twilio from 'twilio';
-import { User } from '../models/User.model';
-import { sendSuccess, sendError } from '../utils/response';
-import { AuthRequest } from '../middleware/auth';
+import { User } from '../models/User.model.js';
+import { sendSuccess, sendError } from '../utils/response.js';
+import { AuthRequest } from '../middleware/auth.js';
 import mongoose from 'mongoose';
-import { Transaction } from '../models/Transaction.model';
-import { PendingTransaction } from '../models/PendingTransaction.model';
-import { Kyc } from '../models/Kyc.model';
+import { Transaction } from '../models/Transaction.model.js';
+import { PendingTransaction } from '../models/PendingTransaction.model.js';
+import { Kyc } from '../models/Kyc.model.js';
 import {
   generateOTP,
   toE164,
   OTP_EXPIRATION_SECONDS,
-} from '../services/otp.service';
-import { transferFromUserWallet } from '../services/user-wallet.service';
+} from '../services/otp.service.js';
+import { transferFromUserWallet } from '../services/user-wallet.service.js';
 import { ethers } from 'ethers';
-import ERC20_ABI from '../utils/ERC20ABI';
+import ERC20_ABI from '../utils/ERC20ABI.js';
 
 /**
  * Get authenticated user's details

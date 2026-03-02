@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { submitKyc } from '../controllers/kyc.controller';
+import { submitKyc } from '../controllers/kyc.controller.js';
 
 const router = Router();
 

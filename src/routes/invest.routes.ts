@@ -3,7 +3,7 @@ import {
   invest,
   getInvestments,
   totalInvestment,
-} from '../controllers/invest.controller';
+} from '../controllers/invest.controller.js';
 
 const router = Router();
 

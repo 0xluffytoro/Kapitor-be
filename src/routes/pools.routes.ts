@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPool } from '../controllers/pools.controller';
+import { createPool } from '../controllers/pools.controller.js';
 
 const router = Router();
 router.post('/', createPool);

@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import twilio from 'twilio';
 import jwt from 'jsonwebtoken';
-import { Otp } from '../models/Otp.model';
-import { sendSuccess, sendError } from '../utils/response';
-import { Kyc } from '../models/Kyc.model';
-import { User } from '../models/User.model';
-import { BusinessUser } from '../models/BusinessUser.model';
+import { Otp } from '../models/Otp.model.js';
+import { sendSuccess, sendError } from '../utils/response.js';
+import { Kyc } from '../models/Kyc.model.js';
+import { User } from '../models/User.model.js';
+import { BusinessUser } from '../models/BusinessUser.model.js';
 import {
   generateOTP,
   toE164,
   OTP_EXPIRATION_SECONDS,
-} from '../services/otp.service';
+} from '../services/otp.service.js';
 
 /**
  * Send OTP to phone number

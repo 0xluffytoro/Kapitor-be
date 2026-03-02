@@ -8,7 +8,7 @@ import {
   sendTransaction,
   verifyTransaction,
   updateUserRiskProfile,
-} from '../controllers/user.controller';
+} from '../controllers/user.controller.js';
 
 const router = Router();
 

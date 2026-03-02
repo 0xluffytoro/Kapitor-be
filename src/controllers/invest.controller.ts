@@ -1,11 +1,11 @@
 import { NextFunction, Response } from 'express';
 import mongoose from 'mongoose';
-import { AuthRequest } from '../middleware/auth';
-import { User } from '../models/User.model';
-import { Pools } from '../models/Pools.model';
-import { Transaction } from '../models/Transaction.model';
-import { sendError, sendSuccess } from '../utils/response';
-import { transferFromUserWallet } from '../services/user-wallet.service';
+import { AuthRequest } from '../middleware/auth.js';
+import { User } from '../models/User.model.js';
+import { Pools } from '../models/Pools.model.js';
+import { Transaction } from '../models/Transaction.model.js';
+import { sendError, sendSuccess } from '../utils/response.js';
+import { transferFromUserWallet } from '../services/user-wallet.service.js';
 
 export async function invest(
   req: AuthRequest,

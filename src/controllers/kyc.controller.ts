@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import { AuthRequest } from '../middleware/auth';
-import { Kyc } from '../models/Kyc.model';
-import { sendError, sendSuccess } from '../utils/response';
+import { AuthRequest } from '../middleware/auth.js';
+import { Kyc } from '../models/Kyc.model.js';
+import { sendError, sendSuccess } from '../utils/response.js';
 
 /**
  * Submit KYC documents

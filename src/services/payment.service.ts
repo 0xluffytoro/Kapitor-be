@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import ERC20_ABI from '../utils/ERC20ABI';
+import ERC20_ABI from '../utils/ERC20ABI.js';
 
 export async function getInrAmountInUsdc(inrAmount: number): Promise<number> {
   const response = await fetch(

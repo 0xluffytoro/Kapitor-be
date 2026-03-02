@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
-import { Pools } from '../models/Pools.model';
-import { sendSuccess } from '../utils/response';
+import { Pools } from '../models/Pools.model.js';
+import { sendSuccess } from '../utils/response.js';
 
 /**
  * Create pool

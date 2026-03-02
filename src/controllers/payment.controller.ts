@@ -1,11 +1,11 @@
 import { Response, NextFunction } from 'express';
-import { sendError, sendSuccess } from '../utils/response';
+import { sendError, sendSuccess } from '../utils/response.js';
 import Razorpay from 'razorpay';
-import { RazorpayOrders } from '../models/RazorpayOrders.model';
-import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils';
-import { getInrAmountInUsdc, mintTo } from '../services/payment.service';
-import { Transaction } from '../models/Transaction.model';
-import { AuthRequest } from '../middleware/auth';
+import { RazorpayOrders } from '../models/RazorpayOrders.model.js';
+import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils.js';
+import { getInrAmountInUsdc, mintTo } from '../services/payment.service.js';
+import { Transaction } from '../models/Transaction.model.js';
+import { AuthRequest } from '../middleware/auth.js';
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || '',

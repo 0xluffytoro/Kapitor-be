@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import otpRoutes from './otp.routes';
-import userRoutes from './user.routes';
-import kycRoutes from './kyc.routes';
-import businessUserRoutes from './business-user.routes';
-import paymentRoutes from './payment.routes';
-import investRoutes from './invest.routes';
-import poolsRoutes from './pools.routes';
-import { authenticate } from '../middleware/auth';
+import otpRoutes from './otp.routes.js';
+import userRoutes from './user.routes.js';
+import kycRoutes from './kyc.routes.js';
+import businessUserRoutes from './business-user.routes.js';
+import paymentRoutes from './payment.routes.js';
+import investRoutes from './invest.routes.js';
+import poolsRoutes from './pools.routes.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 

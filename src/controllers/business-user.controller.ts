@@ -1,10 +1,10 @@
 import { Response, NextFunction } from 'express';
-import { BusinessUser } from '../models/BusinessUser.model';
-import { sendSuccess, sendError } from '../utils/response';
+import { BusinessUser } from '../models/BusinessUser.model.js';
+import { sendSuccess, sendError } from '../utils/response.js';
 import mongoose from 'mongoose';
-import { AuthRequest } from '../middleware/auth';
-import { User } from '../models/User.model';
-import { toE164 } from '../services/otp.service';
+import { AuthRequest } from '../middleware/auth.js';
+import { User } from '../models/User.model.js';
+import { toE164 } from '../services/otp.service.js';
 
 /**
  * Create business user account

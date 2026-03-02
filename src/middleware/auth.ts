@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { sendError } from '../utils/response';
+import { sendError } from '../utils/response.js';
 
 export interface AuthRequest extends Request {
   uid?: string;
