@@ -140,7 +140,7 @@ export async function verifyOTP(
       // Find or create user by phone number
       let userRecord = await User.findOne({
         phoneNumber: formattedPhone,
-      }).select('_id');
+      }).select('_id walletAddress');
 
       if (!userRecord) {
         userRecord = await User.create({
