@@ -83,3 +83,20 @@ export async function createPool(
     next(error);
   }
 }
+
+/**
+ * Get all pools
+ * GET /pools
+ */
+export async function getPools(
+  _req: any,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const pools = await Pools.find().lean();
+    sendSuccess(res, { pools }, 200);
+  } catch (error) {
+    next(error);
+  }
+}
