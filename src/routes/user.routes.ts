@@ -8,6 +8,7 @@ import {
   sendTransaction,
   verifyTransaction,
   updateUserRiskProfile,
+  getTokens,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -127,6 +128,28 @@ router.get('/details', getDetails);
  *         description: User wallet not found
  */
 router.get('/balance', getBalance);
+
+/**
+ * @openapi
+ * /user/tokens:
+ *   get:
+ *     summary: Get supported tokens
+ *     description: Returns a static list of supported tokens with basic metadata.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of supported tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
+ */
+router.get('/tokens', getTokens);
 
 /**
  * @openapi

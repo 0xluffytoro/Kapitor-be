@@ -16,6 +16,34 @@ import { transferFromUserWallet } from '../services/user-wallet.service.js';
 import { ethers } from 'ethers';
 import ERC20_ABI from '../utils/ERC20ABI.js';
 
+const SUPPORTED_TOKENS = [
+  {
+    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    name: 'Tether USD',
+    symbol: 'USDT',
+    image_url:
+      'https://assets.coingecko.com/coins/images/325/small/Tether.png?1696501661',
+  },
+  {
+    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+    name: 'USDC',
+    symbol: 'USDC',
+    image_url: 'https://etherscan.io/token/images/usdc_ofc_32.svg',
+  },
+  {
+    address: '0x',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    image_url: 'https://etherscan.io/images/main/empty-token.png',
+  },
+  {
+    address: '0x',
+    name: 'Kapitor',
+    symbol: 'KPT',
+    image_url: 'https://etherscan.io/images/main/empty-token.png',
+  },
+] as const;
+
 /**
  * Get authenticated user's details
  * GET /user/details
@@ -463,6 +491,28 @@ export async function getBalance(
         nativeBalanceWei: nativeBalance.toString(),
         nativeBalance: ethers.formatEther(nativeBalance),
         tokenBalance,
+      },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get list of supported tokens (static list)
+ * GET /user/tokens
+ */
+export async function getTokens(
+  _req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    sendSuccess(
+      res,
+      {
+        tokens: SUPPORTED_TOKENS,
       },
       200
     );
