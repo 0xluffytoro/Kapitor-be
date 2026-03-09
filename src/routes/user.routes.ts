@@ -10,6 +10,10 @@ import {
   updateUserRiskProfile,
   getTokens,
 } from '../controllers/user.controller.js';
+import {
+  addAddressBookEntry,
+  getAddressBook,
+} from '../controllers/address-book.controller.js';
 
 const router = Router();
 
@@ -276,6 +280,72 @@ router.get('/recent-transactions', getRecentTransactions);
  *         description: User not found
  */
 router.post('/risk-profile', updateUserRiskProfile);
+
+/**
+ * @openapi
+ * /user/address-book:
+ *   get:
+ *     summary: Get address book entries
+ *     description: Returns all address book entries for the authenticated user.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Address book entries fetched
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID
+ *       401:
+ *         description: Missing or invalid token
+ */
+router.get('/address-book', getAddressBook);
+
+/**
+ * @openapi
+ * /user/address-book/add:
+ *   post:
+ *     summary: Add address book entry
+ *     description: Adds a wallet address and name to the authenticated user's address book.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - walletAddress
+ *               - name
+ *             properties:
+ *               walletAddress:
+ *                 type: string
+ *                 example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+ *               name:
+ *                 type: string
+ *                 example: "Alice"
+ *     responses:
+ *       201:
+ *         description: Address book entry created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID or invalid payload
+ *       401:
+ *         description: Missing or invalid token
+ *       409:
+ *         description: Address already exists in address book
+ */
+router.post('/address-book', addAddressBookEntry);
 
 const transactionRouter = Router();
 
