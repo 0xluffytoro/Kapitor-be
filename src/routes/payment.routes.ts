@@ -46,16 +46,9 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 amount:
- *                   type: number
- *                 currency:
- *                   type: string
- *                 receipt:
- *                   type: string
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Missing or invalid token
  */
 router.post('/create-order', createOrder);
 
@@ -76,28 +69,32 @@ router.post('/create-order', createOrder);
  *           schema:
  *             type: object
  *             required:
- *               - order_id
+ *               - razorpay_order_id
+ *               - razorpay_payment_id
+ *               - razorpay_signature
  *             properties:
  *               razorpay_order_id:
  *                 type: string
- *                 example: ""
+ *                 example: "order_Pn8Jf9t8w1nQWx"
  *               razorpay_payment_id:
  *                 type: string
- *                 example: ""
+ *                 example: "pay_Pn8K2x7r2xVbY3"
  *               razorpay_signature:
  *                 type: string
- *                 example: ""
+ *                 example: "a9d8f4f7506d..."
  *     responses:
  *       200:
- *         description: Order updated
+ *         description: Payment verified successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
  *       400:
- *         description: Missing order_id
- *       404:
- *         description: Order not found
+ *         description: Payment verification failed
+ *       401:
+ *         description: Missing required fields or invalid token
+ *       403:
+ *         description: Wallet address not found for the user
  */
 router.post('/verify-payment', verifyPayment);
 

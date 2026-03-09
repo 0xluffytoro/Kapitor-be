@@ -88,6 +88,7 @@ const options: swaggerJsdoc.Options = {
       { name: 'BusinessUser', description: 'Business user endpoints' },
       { name: 'Payment', description: 'Payment processing endpoints' },
       { name: 'Investment', description: 'Investment endpoints' },
+      { name: 'Pools', description: 'Pools endpoints' },
     ],
   },
   apis: [
@@ -101,6 +102,7 @@ const options: swaggerJsdoc.Options = {
     ),
     path.join(__dirname, `../routes/payment.routes${path.extname(__filename)}`),
     path.join(__dirname, `../routes/invest.routes${path.extname(__filename)}`),
+    path.join(__dirname, `../routes/pools.routes${path.extname(__filename)}`),
   ],
 };
 

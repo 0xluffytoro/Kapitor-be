@@ -56,10 +56,10 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID
  *       401:
  *         description: Missing or invalid token
- *       404:
- *         description: Phone number not found
  *       409:
  *         description: User already exists
  */
@@ -110,7 +110,7 @@ router.get('/details', getDetails);
  * /user/balance:
  *   get:
  *     summary: Get user wallet balance
- *     description: Returns the authenticated user's wallet balance via RPC.
+ *     description: Returns ETH, USDT, USDC and KAPITOR balances for the authenticated user's wallet via RPC.
  *     tags:
  *       - User
  *     security:
@@ -122,10 +122,39 @@ router.get('/details', getDetails);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 walletAddress: "0x1234...abcd"
+ *                 balances:
+ *                   - symbol: "ETH"
+ *                     address: null
+ *                     balance: "0.0042"
+ *                     decimals: 18
+ *                     error: null
+ *                   - symbol: "USDT"
+ *                     address: "0x..."
+ *                     balance: "10.5"
+ *                     decimals: 6
+ *                     error: null
+ *                   - symbol: "USDC"
+ *                     address: "0x..."
+ *                     balance: "0"
+ *                     decimals: 6
+ *                     error: null
+ *                   - symbol: "KPT"
+ *                     address: "0x..."
+ *                     balance: "1250.0"
+ *                     decimals: 18
+ *                     error: null
+ *       400:
+ *         description: Invalid user ID
  *       401:
  *         description: Missing or invalid token
  *       404:
- *         description: User wallet not found
+ *         description: User wallet address not found
+ *       500:
+ *         description: ETH RPC configuration missing
  */
 router.get('/balance', getBalance);
 
@@ -175,6 +204,8 @@ router.get('/tokens', getTokens);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID
  *       401:
  *         description: Missing or invalid token
  */
@@ -197,6 +228,8 @@ router.get('/transactions', getUserTransactions);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID
  *       401:
  *         description: Missing or invalid token
  */
@@ -279,8 +312,14 @@ const transactionRouter = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID, invalid recipientAddress, or invalid amount
  *       401:
  *         description: Missing or invalid token
+ *       404:
+ *         description: User phone number not found
+ *       503:
+ *         description: Twilio is not configured
  */
 transactionRouter.post('/send-transaction', sendTransaction);
 
@@ -317,8 +356,12 @@ transactionRouter.post('/send-transaction', sendTransaction);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid user ID, missing fields, invalid OTP, or expired OTP
  *       401:
  *         description: Missing or invalid token
+ *       404:
+ *         description: Pending transaction not found
  */
 transactionRouter.post('/verify-transaction', verifyTransaction);
 
