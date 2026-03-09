@@ -1,5 +1,6 @@
 import { arbitrumSepolia } from 'viem/chains';
 import ERC20_ABI from '../utils/ERC20ABI.js';
+import { ethers } from 'ethers';
 
 export async function transferFromUserWallet(params: {
   accountAddress: string;
@@ -87,3 +88,51 @@ export async function transferFromUserWallet(params: {
 
   return { txHash };
 }
+
+export const readTokenBalance = async (
+  symbol: string,
+  walletAddress: string,
+  tokenAddress?: string,
+  fallbackDecimals = 18
+) => {
+  if (!tokenAddress) {
+    return {
+      symbol,
+      address: null,
+      balance: null,
+      decimals: fallbackDecimals,
+      error: `${symbol} contract address is not configured`,
+    };
+  }
+
+  try {
+    const rpcUrl = process.env.ETH_RPC_URL;
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+    const [rawBalance, decimalsValue] = await Promise.all([
+      contract.balanceOf(walletAddress) as Promise<bigint>,
+      contract.decimals(),
+    ]);
+
+    const decimals =
+      typeof decimalsValue === 'bigint'
+        ? Number(decimalsValue)
+        : Number(decimalsValue);
+
+    return {
+      symbol,
+      address: tokenAddress,
+      balance: ethers.formatUnits(rawBalance, decimals),
+      decimals,
+      error: null,
+    };
+  } catch {
+    return {
+      symbol,
+      address: tokenAddress,
+      balance: '0',
+      decimals: fallbackDecimals,
+      error: `Unable to fetch ${symbol} balance`,
+    };
+  }
+};

@@ -12,9 +12,11 @@ import {
   toE164,
   OTP_EXPIRATION_SECONDS,
 } from '../services/otp.service.js';
-import { transferFromUserWallet } from '../services/user-wallet.service.js';
+import {
+  readTokenBalance,
+  transferFromUserWallet,
+} from '../services/user-wallet.service.js';
 import { ethers } from 'ethers';
-import ERC20_ABI from '../utils/ERC20ABI.js';
 
 const SUPPORTED_TOKENS = [
   {
@@ -472,25 +474,35 @@ export async function getBalance(
     }
 
     const provider = new ethers.JsonRpcProvider(rpcUrl);
-    const nativeBalance = await provider.getBalance(user.walletAddress);
+    const ethRawBalance = await provider.getBalance(user.walletAddress);
 
-    let tokenBalance: string | null = null;
-    const tokenAddress = process.env.KPT_TOKEN_ADDRESS;
-    if (tokenAddress) {
-      const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-      const decimalsEnv = process.env.KPT_TOKEN_DECIMALS;
-      const decimals = decimalsEnv ? Number(decimalsEnv) : 18;
-      const raw = await contract.balanceOf(user.walletAddress);
-      tokenBalance = ethers.formatUnits(raw, decimals);
-    }
+    const [usdt, usdc, kapitor] = await Promise.all([
+      readTokenBalance('USDT', user.walletAddress, process.env.USDT_ADDRESS, 6),
+      readTokenBalance('USDC', user.walletAddress, process.env.USDC_ADDRESS, 6),
+      readTokenBalance(
+        'KPT',
+        user.walletAddress,
+        process.env.KPT_TOKEN_ADDRESS,
+        18
+      ),
+    ]);
 
     sendSuccess(
       res,
       {
         walletAddress: user.walletAddress,
-        nativeBalanceWei: nativeBalance.toString(),
-        nativeBalance: ethers.formatEther(nativeBalance),
-        tokenBalance,
+        balances: [
+          {
+            symbol: 'ETH',
+            address: null,
+            balance: ethers.formatEther(ethRawBalance),
+            decimals: 18,
+            error: null,
+          },
+          usdt,
+          usdc,
+          kapitor,
+        ],
       },
       200
     );
