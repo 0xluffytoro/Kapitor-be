@@ -88,7 +88,7 @@ export async function verifyPayment(
     if (isValidSignature) {
       // Update the order with payment details
       const order = await RazorpayOrders.findOne({
-        _id: razorpay_order_id,
+        order_id: razorpay_order_id,
       }).populate('userId', 'walletAddress');
       if (order) {
         const walletAddress = (order.userId as { walletAddress?: string })
