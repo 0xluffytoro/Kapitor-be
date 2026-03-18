@@ -5,7 +5,10 @@ import { User } from '../models/User.model.js';
 import { Pools } from '../models/Pools.model.js';
 import { Transaction } from '../models/Transaction.model.js';
 import { sendError, sendSuccess } from '../utils/response.js';
-import { transferFromUserWallet } from '../services/user-wallet.service.js';
+import {
+  readTokenBalance,
+  transferFromUserWallet,
+} from '../services/user-wallet.service.js';
 
 export async function invest(
   req: AuthRequest,
@@ -54,12 +57,40 @@ export async function invest(
       return;
     }
 
+    const usdtBalance = await readTokenBalance(
+      'USDT',
+      user.walletAddress,
+      process.env.USDT_ADDRESS,
+      6
+    );
+    if (usdtBalance.error) {
+      sendError(res, usdtBalance.error, 500);
+      return;
+    }
+
+    const availableUsdt = Number(usdtBalance.balance);
+    if (!Number.isFinite(availableUsdt)) {
+      sendError(res, 'Unable to determine user USDT balance', 500);
+      return;
+    }
+    if (availableUsdt < parsedAmount) {
+      sendError(res, 'Insufficient USDT balance', 400);
+      return;
+    }
+
     const result = await transferFromUserWallet({
       accountAddress: user.walletAddress,
       recipientAddress: pool.walletAddress,
       amount: parsedAmount,
       isUSDT: true,
     });
+
+    if (!result.txHash?.trim()) {
+      sendError(res, 'Transfer failed: transaction hash not received', 502, {
+        result,
+      });
+      return;
+    }
 
     const tx = await Transaction.create({
       userId: uid,

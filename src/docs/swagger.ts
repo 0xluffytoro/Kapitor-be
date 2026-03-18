@@ -78,6 +78,56 @@ const options: swaggerJsdoc.Options = {
             role: { type: 'string', enum: ['user', 'admin'] },
           },
         },
+        Pool: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67d8e8b4a2c9e9a1b2345678' },
+            poolId: { type: 'string', example: 'POOL-001' },
+            name: { type: 'string', example: 'Growth Pool Alpha' },
+            walletAddress: {
+              type: 'string',
+              example: '0x1234567890abcdef1234567890abcdef12345678',
+            },
+            capacity: { type: 'number', example: 100000 },
+            currenlyFilled: { type: 'number', example: 25000 },
+            startDate: {
+              type: 'string',
+              format: 'date',
+              example: '2026-03-01',
+            },
+            endDate: { type: 'string', format: 'date', example: '2027-03-01' },
+            roiOneYear: { type: 'number', example: 12.5 },
+            roiThreeYears: { type: 'number', example: 42.75 },
+            roiFiveYears: { type: 'number', example: 88.1 },
+            min_investment: { type: 'number', example: 1000 },
+            image: {
+              type: 'string',
+              example: 'https://cdn.example.com/pools/growth-alpha.png',
+            },
+          },
+        },
+        PoolListResponse: {
+          type: 'object',
+          properties: {
+            success: {
+              type: 'boolean',
+              example: true,
+            },
+            data: {
+              type: 'object',
+              properties: {
+                pools: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Pool',
+                  },
+                },
+              },
+              required: ['pools'],
+            },
+          },
+          required: ['success', 'data'],
+        },
       },
     },
     tags: [

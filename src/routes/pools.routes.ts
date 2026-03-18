@@ -56,7 +56,15 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Pool'
+ *       500:
+ *         description: Failed to create pool
  */
 router.post('/', createPool);
 
@@ -74,7 +82,26 @@ router.post('/', createPool);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
+ *               $ref: '#/components/schemas/PoolListResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 pools:
+ *                   - id: '67d8e8b4a2c9e9a1b2345678'
+ *                     poolId: 'POOL-001'
+ *                     name: 'Growth Pool Alpha'
+ *                     walletAddress: '0x1234567890abcdef1234567890abcdef12345678'
+ *                     capacity: 100000
+ *                     currenlyFilled: 25000
+ *                     startDate: '2026-03-01'
+ *                     endDate: '2027-03-01'
+ *                     roiOneYear: 12.5
+ *                     roiThreeYears: 42.75
+ *                     roiFiveYears: 88.1
+ *                     min_investment: 1000
+ *                     image: 'https://cdn.example.com/pools/growth-alpha.png'
+ *       500:
+ *         description: Failed to fetch pools
  */
 router.get('/', getPools);
 
