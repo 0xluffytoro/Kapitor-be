@@ -153,6 +153,7 @@ export async function getBusinessUser(
         phoneNumber: businessUser.phoneNumber,
         certificateOfIncorporation: businessUser.certificateOfIncorporation,
         addressProof: businessUser.addressProof,
+        kyb: businessUser.kybStatus,
       },
       200
     );
