@@ -17,7 +17,8 @@ export async function invest(
 ) {
   try {
     const uid = req.uid as string;
-    const { poolAddress, amount } = req.body;
+    const { poolAddress, amount, lockInPeriod } = req.body;
+    const allowedLockInPeriods = ['1y', '3y', '5y'] as const;
 
     if (!mongoose.Types.ObjectId.isValid(uid)) {
       sendError(res, 'Invalid user ID', 400);
@@ -34,6 +35,15 @@ export async function invest(
     }
     if (parsedAmount < 1000) {
       sendError(res, 'amount must be at least 1000', 400);
+      return;
+    }
+    if (
+      typeof lockInPeriod !== 'string' ||
+      !allowedLockInPeriods.includes(
+        lockInPeriod as (typeof allowedLockInPeriods)[number]
+      )
+    ) {
+      sendError(res, 'lockInPeriod must be one of 1y, 3y, or 5y', 400);
       return;
     }
 
@@ -97,6 +107,7 @@ export async function invest(
       txHash: result.txHash,
       toAddress: pool.walletAddress,
       tokenAmount: parsedAmount,
+      lockInPeriod,
       source: 'investment',
     });
 

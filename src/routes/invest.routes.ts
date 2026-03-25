@@ -26,6 +26,7 @@ const router = Router();
  *             required:
  *               - poolAddress
  *               - amount
+ *               - lockInPeriod
  *             properties:
  *               poolAddress:
  *                 type: string
@@ -33,6 +34,10 @@ const router = Router();
  *               amount:
  *                 type: number
  *                 example: 1500
+ *               lockInPeriod:
+ *                 type: string
+ *                 enum: [1y, 3y, 5y]
+ *                 example: 3y
  *     responses:
  *       201:
  *         description: Investment successful

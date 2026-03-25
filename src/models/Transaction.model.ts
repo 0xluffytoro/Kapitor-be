@@ -11,6 +11,7 @@ export interface ITransaction extends Document {
   inrAmount?: number;
   usdcAmount?: number;
   tokenAmount?: number;
+  lockInPeriod?: '1y' | '3y' | '5y';
   source: 'payment-success' | 'user-transaction' | 'investment';
 }
 
@@ -48,6 +49,11 @@ const transactionSchema = new Schema<ITransaction>(
     tokenAmount: {
       type: Number,
       min: 0,
+    },
+    lockInPeriod: {
+      type: String,
+      enum: ['1y', '3y', '5y'],
+      trim: true,
     },
     source: {
       type: String,
