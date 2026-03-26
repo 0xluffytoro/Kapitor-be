@@ -1,7 +1,6 @@
 import { NextFunction, Response } from 'express';
 import mongoose from 'mongoose';
 import { AuthRequest } from '../middleware/auth.js';
-import { User } from '../models/User.model.js';
 import { Pools } from '../models/Pools.model.js';
 import { Transaction } from '../models/Transaction.model.js';
 import { sendError, sendSuccess } from '../utils/response.js';
@@ -9,6 +8,7 @@ import {
   readTokenBalance,
   transferFromUserWallet,
 } from '../services/user-wallet.service.js';
+import { findAccountById } from '../services/account.service.js';
 
 export async function invest(
   req: AuthRequest,
@@ -47,10 +47,8 @@ export async function invest(
       return;
     }
 
-    const user = await User.findById(uid)
-      .select('walletAddress externalServerKeyShares')
-      .lean();
-    if (!user?.walletAddress || !user.externalServerKeyShares) {
+    const user = await findAccountById(uid);
+    if (!user?.walletAddress) {
       sendError(res, 'User wallet is not configured', 400);
       return;
     }

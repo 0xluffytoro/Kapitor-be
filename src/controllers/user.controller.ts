@@ -17,6 +17,7 @@ import {
   transferFromUserWallet,
 } from '../services/user-wallet.service.js';
 import { ethers } from 'ethers';
+import { findAccountById } from '../services/account.service.js';
 
 const SUPPORTED_TOKENS = [
   {
@@ -285,7 +286,7 @@ export async function sendTransaction(
       return;
     }
 
-    const user = await User.findById(uid).select('phoneNumber').lean();
+    const user = await findAccountById(uid);
     if (!user?.phoneNumber) {
       sendError(res, 'User phone number not found', 404);
       return;
@@ -404,10 +405,8 @@ export async function verifyTransaction(
       return;
     }
 
-    const user = await User.findById(uid)
-      .select('walletAddress externalServerKeyShares')
-      .lean();
-    if (!user?.walletAddress || !user.externalServerKeyShares) {
+    const user = await findAccountById(uid);
+    if (!user?.walletAddress) {
       sendError(res, 'User wallet is not configured', 400);
       return;
     }
@@ -461,7 +460,7 @@ export async function getBalance(
       return;
     }
 
-    const user = await User.findById(uid).select('walletAddress').lean();
+    const user = await findAccountById(uid);
     if (!user?.walletAddress) {
       sendError(res, 'User wallet address not found', 404);
       return;

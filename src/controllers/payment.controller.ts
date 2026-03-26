@@ -6,6 +6,7 @@ import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils.js'
 import { getInrAmountInUsdc, mintTo } from '../services/payment.service.js';
 import { Transaction } from '../models/Transaction.model.js';
 import { AuthRequest } from '../middleware/auth.js';
+import { findAccountById } from '../services/account.service.js';
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || '',
@@ -102,7 +103,7 @@ export async function verifyPayment(
       // Update the order with payment details
       const order = await RazorpayOrders.findOne({
         order_id: razorpay_order_id,
-      }).populate('userId', 'walletAddress');
+      });
 
       console.info('[payment.verifyPayment] Razorpay order lookup completed', {
         orderId: razorpay_order_id,
@@ -129,8 +130,8 @@ export async function verifyPayment(
           return;
         }
 
-        const walletAddress = (order.userId as { walletAddress?: string })
-          ?.walletAddress;
+        const account = await findAccountById(String(order.userId));
+        const walletAddress = account?.walletAddress;
         if (!walletAddress) {
           console.error('[payment.verifyPayment] Wallet address missing', {
             orderId: razorpay_order_id,
