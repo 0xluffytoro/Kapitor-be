@@ -80,28 +80,98 @@ export async function verifyPayment(
   const body = razorpay_order_id + '|' + razorpay_payment_id;
 
   try {
+    console.info('[payment.verifyPayment] Request received', {
+      uid,
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+    });
+
     const isValidSignature = validateWebhookSignature(
       body,
       razorpay_signature,
       secret
     );
+
+    console.info('[payment.verifyPayment] Signature validation completed', {
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      isValidSignature,
+    });
+
     if (isValidSignature) {
       // Update the order with payment details
       const order = await RazorpayOrders.findOne({
         order_id: razorpay_order_id,
       }).populate('userId', 'walletAddress');
+
+      console.info('[payment.verifyPayment] Razorpay order lookup completed', {
+        orderId: razorpay_order_id,
+        orderFound: Boolean(order),
+      });
+
       if (order) {
+        if (
+          order.status === 'paid' &&
+          order.payment_id === razorpay_payment_id
+        ) {
+          console.info(
+            '[payment.verifyPayment] Duplicate verification ignored',
+            {
+              orderId: razorpay_order_id,
+              paymentId: razorpay_payment_id,
+            }
+          );
+          sendSuccess(
+            res,
+            { message: 'Payment already verified', result: null },
+            200
+          );
+          return;
+        }
+
         const walletAddress = (order.userId as { walletAddress?: string })
           ?.walletAddress;
         if (!walletAddress) {
+          console.error('[payment.verifyPayment] Wallet address missing', {
+            orderId: razorpay_order_id,
+            userId: String(order.userId),
+          });
           sendError(res, 'Wallet address not found', 403);
           return;
         }
+
+        console.info('[payment.verifyPayment] Converting INR to token amount', {
+          orderId: razorpay_order_id,
+          inrAmount: order.amount,
+          walletAddress,
+        });
+
+        const usdAmount = await getInrAmountInUsdc(order.amount);
+        console.info('[payment.verifyPayment] INR conversion completed', {
+          orderId: razorpay_order_id,
+          inrAmount: order.amount,
+          usdcAmount: usdAmount,
+        });
+
+        const result = await mintTo(walletAddress, usdAmount.toString());
+
+        console.info('[payment.verifyPayment] Token distribution completed', {
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          txHash: result?.txHash,
+          method: result?.method,
+        });
+
         order.status = 'paid';
         order.payment_id = razorpay_payment_id;
         await RazorpayOrders.findByIdAndUpdate(order._id, order);
-        const usdAmount = await getInrAmountInUsdc(order.amount);
-        const result = await mintTo(walletAddress, usdAmount.toString());
+
+        console.info('[payment.verifyPayment] Razorpay order updated', {
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          status: 'paid',
+        });
+
         if (result?.txHash) {
           await Transaction.create({
             userId: uid,
@@ -111,14 +181,38 @@ export async function verifyPayment(
             usdcAmount: Number(usdAmount),
             source: 'payment-success',
           });
+
+          console.info('[payment.verifyPayment] Transaction record created', {
+            orderId: razorpay_order_id,
+            paymentId: razorpay_payment_id,
+            txHash: result.txHash,
+          });
         }
+
         sendSuccess(res, { message: 'Payment successful', result }, 200);
+        return;
       }
+
+      console.error('[payment.verifyPayment] Razorpay order not found', {
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+      });
+      sendError(res, 'Order not found', 404);
+      return;
     } else {
       sendError(res, 'Payment verification failed', 400);
-      console.log('Payment verification failed');
+      console.error('[payment.verifyPayment] Signature verification failed', {
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+      });
+      return;
     }
   } catch (error) {
+    console.error('[payment.verifyPayment] Verification flow failed', {
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     next(error);
   }
 }
