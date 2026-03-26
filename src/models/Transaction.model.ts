@@ -13,6 +13,20 @@ export interface ITransaction extends Document {
   tokenAmount?: number;
   lockInPeriod?: '1y' | '3y' | '5y';
   source: 'payment-success' | 'user-transaction' | 'investment';
+  poolDetails?: {
+    poolId: string;
+    name: string;
+    walletAddress: string;
+    capacity: number;
+    currenlyFilled: number;
+    startDate: string;
+    endDate: string;
+    roiOneYear: number;
+    roiThreeYears: number;
+    roiFiveYears: number;
+    min_investment: number;
+    image?: string;
+  };
 }
 
 /* =============================
@@ -60,6 +74,56 @@ const transactionSchema = new Schema<ITransaction>(
       enum: ['payment-success', 'user-transaction', 'investment'],
       required: true,
       default: 'payment-success',
+    },
+    poolDetails: {
+      poolId: {
+        type: String,
+        trim: true,
+      },
+      name: {
+        type: String,
+        trim: true,
+      },
+      walletAddress: {
+        type: String,
+        trim: true,
+      },
+      capacity: {
+        type: Number,
+        min: 0,
+      },
+      currenlyFilled: {
+        type: Number,
+        min: 0,
+      },
+      startDate: {
+        type: String,
+        trim: true,
+      },
+      endDate: {
+        type: String,
+        trim: true,
+      },
+      roiOneYear: {
+        type: Number,
+        min: 0,
+      },
+      roiThreeYears: {
+        type: Number,
+        min: 0,
+      },
+      roiFiveYears: {
+        type: Number,
+        min: 0,
+      },
+      min_investment: {
+        type: Number,
+        min: 0,
+      },
+      image: {
+        type: String,
+        trim: true,
+      },
     },
   },
   {

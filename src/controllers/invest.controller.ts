@@ -11,6 +11,36 @@ import {
   mintTo,
 } from '../services/payment.service.js';
 
+function buildPoolDetailsSnapshot(pool: {
+  poolId: string;
+  name: string;
+  walletAddress: string;
+  capacity: number;
+  currenlyFilled: number;
+  startDate: string;
+  endDate: string;
+  roiOneYear: number;
+  roiThreeYears: number;
+  roiFiveYears: number;
+  min_investment: number;
+  image?: string;
+}) {
+  return {
+    poolId: pool.poolId,
+    name: pool.name,
+    walletAddress: pool.walletAddress,
+    capacity: pool.capacity,
+    currenlyFilled: pool.currenlyFilled,
+    startDate: pool.startDate,
+    endDate: pool.endDate,
+    roiOneYear: pool.roiOneYear,
+    roiThreeYears: pool.roiThreeYears,
+    roiFiveYears: pool.roiFiveYears,
+    min_investment: pool.min_investment,
+    image: pool.image,
+  };
+}
+
 export async function invest(
   req: AuthRequest,
   res: Response,
@@ -60,6 +90,16 @@ export async function invest(
       return;
     }
 
+    const existingInvestment = await Transaction.exists({
+      userId: uid,
+      source: 'investment',
+      'poolDetails.walletAddress': pool.walletAddress,
+    });
+    if (existingInvestment) {
+      sendError(res, 'User has already invested in this pool', 403);
+      return;
+    }
+
     const remainingCapacity = pool.capacity - (pool.currenlyFilled ?? 0);
     if (remainingCapacity < parsedAmount) {
       sendError(res, 'Pool does not have enough capacity', 400);
@@ -95,6 +135,7 @@ export async function invest(
       return;
     }
 
+    const updatedPoolFilled = (pool.currenlyFilled ?? 0) + parsedAmount;
     const tx = await Transaction.create({
       userId: uid,
       txHash: kptTransferResult.txHash,
@@ -103,9 +144,23 @@ export async function invest(
       usdcAmount: parsedAmount,
       lockInPeriod,
       source: 'investment',
+      poolDetails: buildPoolDetailsSnapshot({
+        poolId: pool.poolId,
+        name: pool.name,
+        walletAddress: pool.walletAddress,
+        capacity: pool.capacity,
+        currenlyFilled: updatedPoolFilled,
+        startDate: pool.startDate,
+        endDate: pool.endDate,
+        roiOneYear: pool.roiOneYear,
+        roiThreeYears: pool.roiThreeYears,
+        roiFiveYears: pool.roiFiveYears,
+        min_investment: pool.min_investment,
+        image: pool.image,
+      }),
     });
 
-    pool.currenlyFilled = (pool.currenlyFilled ?? 0) + parsedAmount;
+    pool.currenlyFilled = updatedPoolFilled;
     await pool.save();
 
     sendSuccess(
