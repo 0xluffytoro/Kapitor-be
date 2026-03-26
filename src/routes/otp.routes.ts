@@ -97,6 +97,7 @@ router.post('/send', validate(sendOtpSchema), sendOTP);
  *                   kycStatus: "pending"
  *                   userType: "user"
  *                   isUserCreated: true
+ *                   businessUserId: "507f1f77bcf86cd799439011"
  *       400:
  *         description: OTP not found, expired, or invalid
  *       500:

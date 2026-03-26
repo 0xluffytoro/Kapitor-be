@@ -131,10 +131,12 @@ export async function verifyOTP(
     let kycStatus = 'pending';
     let userType: 'user' | 'business-user' = 'user';
     let isUserCreated = false;
+    let businessUserId: string | undefined;
 
     if (businessUserRecord) {
       isUserCreated = true;
       uid = businessUserRecord._id.toString();
+      businessUserId = businessUserRecord._id.toString();
       userType = 'business-user';
     } else {
       // Find or create user by phone number
@@ -177,6 +179,9 @@ export async function verifyOTP(
       userType,
       isUserCreated,
     };
+    if (businessUserId) {
+      response['businessUserId'] = businessUserId;
+    }
     if (userType === 'user') {
       response['kycStatus'] = kycStatus;
     }
