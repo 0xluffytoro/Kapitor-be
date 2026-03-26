@@ -12,7 +12,7 @@ const router = Router();
  * /invest:
  *   post:
  *     summary: Invest in a pool
- *     description: Transfers tokens from the user to the pool wallet and records the investment transaction.
+ *     description: Calculates the KPT amount, transfers KPT from treasury to the pool wallet, and records the investment transaction.
  *     tags:
  *       - Investment
  *     security:

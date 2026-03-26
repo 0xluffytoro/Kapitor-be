@@ -4,11 +4,12 @@ import { AuthRequest } from '../middleware/auth.js';
 import { Pools } from '../models/Pools.model.js';
 import { Transaction } from '../models/Transaction.model.js';
 import { sendError, sendSuccess } from '../utils/response.js';
-import {
-  readTokenBalance,
-  transferFromUserWallet,
-} from '../services/user-wallet.service.js';
 import { findAccountById } from '../services/account.service.js';
+import {
+  canFulfillPayment,
+  getInrAmountInUsdc,
+  mintTo,
+} from '../services/payment.service.js';
 
 export async function invest(
   req: AuthRequest,
@@ -65,46 +66,41 @@ export async function invest(
       return;
     }
 
-    const usdtBalance = await readTokenBalance(
-      'USDT',
-      user.walletAddress,
-      process.env.USDT_ADDRESS,
-      6
+    const kptAmount = await getInrAmountInUsdc(parsedAmount);
+    const treasuryReadiness = await canFulfillPayment(parsedAmount);
+    if (!treasuryReadiness.ok) {
+      sendError(
+        res,
+        treasuryReadiness.message ??
+          'Treasury cannot transfer KPT to this pool right now',
+        400
+      );
+      return;
+    }
+
+    const kptTransferResult = await mintTo(
+      pool.walletAddress,
+      kptAmount.toString()
     );
-    if (usdtBalance.error) {
-      sendError(res, usdtBalance.error, 500);
-      return;
-    }
 
-    const availableUsdt = Number(usdtBalance.balance);
-    if (!Number.isFinite(availableUsdt)) {
-      sendError(res, 'Unable to determine user USDT balance', 500);
-      return;
-    }
-    if (availableUsdt < parsedAmount) {
-      sendError(res, 'Insufficient USDT balance', 400);
-      return;
-    }
-
-    const result = await transferFromUserWallet({
-      accountAddress: user.walletAddress,
-      recipientAddress: pool.walletAddress,
-      amount: parsedAmount,
-      isUSDT: true,
-    });
-
-    if (!result.txHash?.trim()) {
-      sendError(res, 'Transfer failed: transaction hash not received', 502, {
-        result,
-      });
+    if (!kptTransferResult.txHash?.trim()) {
+      sendError(
+        res,
+        'Treasury KPT transfer failed: transaction hash not received',
+        502,
+        {
+          result: kptTransferResult,
+        }
+      );
       return;
     }
 
     const tx = await Transaction.create({
       userId: uid,
-      txHash: result.txHash,
+      txHash: kptTransferResult.txHash,
       toAddress: pool.walletAddress,
       tokenAmount: parsedAmount,
+      usdcAmount: parsedAmount,
       lockInPeriod,
       source: 'investment',
     });
@@ -117,7 +113,7 @@ export async function invest(
       {
         message: 'Investment successful',
         transaction: tx,
-        result,
+        result: kptTransferResult,
       },
       201
     );
