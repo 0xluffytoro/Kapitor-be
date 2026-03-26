@@ -12,6 +12,91 @@ export async function getInrAmountInUsdc(inrAmount: number): Promise<number> {
   return inrAmount / price;
 }
 
+export async function canFulfillPayment(amount: number): Promise<{
+  ok: boolean;
+  message?: string;
+}> {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return {
+      ok: false,
+      message: 'amount must be greater than zero',
+    };
+  }
+
+  const rpcUrl = process.env.ETH_RPC_URL;
+  const treasuryPk = process.env.KAPITOR_TREASURY_PK;
+  const tokenAddress = process.env.KPT_TOKEN_ADDRESS;
+
+  if (!rpcUrl || !treasuryPk || !tokenAddress) {
+    return {
+      ok: false,
+      message: 'Treasury payment configuration is incomplete',
+    };
+  }
+
+  const provider = new ethers.JsonRpcProvider(rpcUrl);
+  const signer = new ethers.Wallet(treasuryPk, provider);
+  const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+
+  const decimalsEnv = process.env.KPT_TOKEN_DECIMALS;
+  const decimals = decimalsEnv ? Number(decimalsEnv) : 18;
+  if (!Number.isInteger(decimals) || decimals < 0) {
+    return {
+      ok: false,
+      message: 'KPT_TOKEN_DECIMALS must be a non-negative integer',
+    };
+  }
+
+  const method = (process.env.KPT_PAYMENT_DISTRIBUTION_METHOD ?? 'transfer')
+    .trim()
+    .toLowerCase();
+  if (method !== 'mint' && method !== 'transfer') {
+    return {
+      ok: false,
+      message:
+        'KPT_PAYMENT_DISTRIBUTION_METHOD must be either "mint" or "transfer"',
+    };
+  }
+
+  const tokenAmount = await getInrAmountInUsdc(amount);
+  const amountInUnits = ethers.parseUnits(String(tokenAmount), decimals);
+
+  const [treasuryEthBalance, feeData, gasLimit, treasuryKptBalance] =
+    await Promise.all([
+      provider.getBalance(signer.address),
+      provider.getFeeData(),
+      method === 'transfer'
+        ? contract.transfer.estimateGas(signer.address, amountInUnits)
+        : contract.mint.estimateGas(signer.address, amountInUnits),
+      contract.balanceOf(signer.address) as Promise<bigint>,
+    ]);
+
+  if (treasuryKptBalance < amountInUnits) {
+    return {
+      ok: false,
+      message: 'Treasury KPT balance is insufficient',
+    };
+  }
+
+  const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice;
+  if (!gasPrice) {
+    return {
+      ok: false,
+      message: 'Unable to determine current gas price',
+    };
+  }
+
+  const requiredGasBalance = gasLimit * gasPrice;
+  if (treasuryEthBalance < requiredGasBalance) {
+    return {
+      ok: false,
+      message: 'Treasury gas balance is insufficient',
+    };
+  }
+
+  return { ok: true };
+}
+
 const ERC20_ERROR_ABI = [
   'error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed)',
   'error ERC20InvalidSender(address sender)',

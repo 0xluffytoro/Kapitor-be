@@ -3,7 +3,11 @@ import { sendError, sendSuccess } from '../utils/response.js';
 import Razorpay from 'razorpay';
 import { RazorpayOrders } from '../models/RazorpayOrders.model.js';
 import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils.js';
-import { getInrAmountInUsdc, mintTo } from '../services/payment.service.js';
+import {
+  canFulfillPayment,
+  getInrAmountInUsdc,
+  mintTo,
+} from '../services/payment.service.js';
 import { Transaction } from '../models/Transaction.model.js';
 import { AuthRequest } from '../middleware/auth.js';
 import { findAccountById } from '../services/account.service.js';
@@ -25,6 +29,17 @@ export async function createOrder(
       return;
     }
     const { amount, currency, receipt, notes } = req.body;
+
+    const treasuryReadiness = await canFulfillPayment(Number(amount));
+    if (!treasuryReadiness.ok) {
+      sendError(
+        res,
+        treasuryReadiness.message ??
+          'Treasury cannot fulfill this payment right now',
+        400
+      );
+      return;
+    }
 
     const options = {
       amount: amount * 100, // Convert amount to paise
