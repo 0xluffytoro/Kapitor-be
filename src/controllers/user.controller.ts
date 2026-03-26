@@ -415,6 +415,7 @@ export async function verifyTransaction(
       accountAddress: user.walletAddress,
       recipientAddress: pending.recipientAddress,
       amount: pending.amount,
+      externalServerKeyShares: user.externalServerKeyShares,
     });
 
     const tx = await Transaction.create({

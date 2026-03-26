@@ -1,3 +1,4 @@
+import type { ServerKeyShare } from '@dynamic-labs-wallet/node';
 import { Schema, model, Document } from 'mongoose';
 
 /* =============================
@@ -16,7 +17,7 @@ export interface IUser extends Document {
   country: string;
   walletAddress?: string;
   walletId?: string;
-  externalServerKeyShares?: unknown;
+  externalServerKeyShares?: ServerKeyShare[];
   role: 'user' | 'admin';
   investmentExperienceLevel?: 'Beginner' | 'intermediate' | 'expert';
   riskAppetite?: 'Low' | 'Medium' | 'High';

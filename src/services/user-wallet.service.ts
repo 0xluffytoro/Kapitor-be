@@ -1,3 +1,4 @@
+import type { ServerKeyShare } from '@dynamic-labs-wallet/node';
 import { arbitrumSepolia } from 'viem/chains';
 import ERC20_ABI from '../utils/ERC20ABI.js';
 import { ethers } from 'ethers';
@@ -7,8 +8,15 @@ export async function transferFromUserWallet(params: {
   recipientAddress: string;
   amount: number | string;
   isUSDT?: boolean;
+  externalServerKeyShares?: ServerKeyShare[];
 }): Promise<{ txHash: string }> {
-  const { accountAddress, recipientAddress, amount, isUSDT } = params;
+  const {
+    accountAddress,
+    recipientAddress,
+    amount,
+    isUSDT,
+    externalServerKeyShares,
+  } = params;
 
   const rpcUrl = process.env.ETH_RPC_URL;
   const tokenAddress = isUSDT
@@ -35,6 +43,11 @@ export async function transferFromUserWallet(params: {
   }
   if (!password) {
     throw new Error('WALLET_PASSWORD is not configured');
+  }
+  if (!externalServerKeyShares) {
+    throw new Error(
+      'User wallet is missing external server key shares required for signing'
+    );
   }
 
   const decimals = decimalsEnv ? Number(decimalsEnv) : 6;
@@ -80,6 +93,7 @@ export async function transferFromUserWallet(params: {
     senderAddress: accountAddress,
     transaction: tx as any,
     password,
+    externalServerKeyShares,
   });
 
   const txHash = await walletClient.sendRawTransaction({
