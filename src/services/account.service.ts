@@ -21,6 +21,6 @@ export async function findAccountById(
   }
 
   return BusinessUser.findById(uid)
-    .select('_id walletAddress phoneNumber')
+    .select('_id walletAddress phoneNumber externalServerKeyShares')
     .lean<AccountLike | null>();
 }

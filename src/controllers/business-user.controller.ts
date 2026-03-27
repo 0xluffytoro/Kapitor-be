@@ -87,6 +87,7 @@ export async function createBusinessUser(
       ownerName,
       ownerShipPercentage,
       walletAddress: evmWallet.accountAddress,
+      externalServerKeyShares: evmWallet.externalServerKeyShares,
       phoneNumber: toE164(phoneNumber),
       certificateOfIncorporation: `${process.env.END_POINT}/document/${certificateFile.filename}`,
       addressProof: `${process.env.END_POINT}/document/${addressFile.filename}`,

@@ -1,3 +1,4 @@
+import type { ServerKeyShare } from '@dynamic-labs-wallet/node';
 import { Document, model, Schema } from 'mongoose';
 
 export interface IBusinessUser extends Document {
@@ -8,6 +9,7 @@ export interface IBusinessUser extends Document {
   ownerName: string;
   ownerShipPercentage: number;
   walletAddress: string;
+  externalServerKeyShares?: ServerKeyShare[];
   phoneNumber: string;
   certificateOfIncorporation?: string;
   addressProof?: string;
@@ -48,6 +50,9 @@ const businessUserSchema = new Schema<IBusinessUser>(
     walletAddress: {
       type: String,
       required: true,
+    },
+    externalServerKeyShares: {
+      type: Schema.Types.Mixed,
     },
     phoneNumber: {
       type: String,
